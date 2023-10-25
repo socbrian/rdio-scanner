@@ -19,7 +19,7 @@
 
 import { Component } from '@angular/core';
 import { AbstractControl, UntypedFormBuilder, ValidatorFn, ValidationErrors, Validators } from '@angular/forms';
-import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
+import { MatLegacySnackBar as MatSnackBar, MatLegacySnackBarConfig as MatSnackBarConfig } from '@angular/material/legacy-snack-bar';
 import { RdioScannerAdminService } from '../../admin.service';
 
 @Component({

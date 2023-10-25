@@ -18,7 +18,7 @@
  */
 
 import { ApplicationRef, Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { SwUpdate, VersionEvent } from '@angular/service-worker';
 import { AppUpdateComponent } from './update.component';
 import { concat, interval } from 'rxjs';

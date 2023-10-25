@@ -19,7 +19,7 @@
 
 import { Component, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
 import { BehaviorSubject } from 'rxjs';
 import { Log, LogsQuery, LogsQueryOptions, RdioScannerAdminService } from '../admin.service';
 

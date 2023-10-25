@@ -18,8 +18,8 @@
  */
 
 import { ModuleWithProviders, NgModule } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
+import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { AppUpdateComponent } from './update.component';
 import { AppUpdateService } from './update.service';

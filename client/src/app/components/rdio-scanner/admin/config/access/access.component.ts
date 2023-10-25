@@ -20,7 +20,7 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, Input, QueryList, ViewChildren } from '@angular/core';
 import { UntypedFormArray, UntypedFormGroup } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { MatExpansionPanel } from '@angular/material/expansion';
 import { RdioScannerAdminService } from '../../admin.service';
 import { RdioScannerAdminSystemsSelectComponent } from '../systems/select/select.component';
