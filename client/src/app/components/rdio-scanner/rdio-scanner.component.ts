@@ -23,7 +23,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { timer } from 'rxjs';
 import { RdioScannerEvent, RdioScannerLivefeedMode } from './rdio-scanner';
 import { RdioScannerService } from './rdio-scanner.service';
-import { RdioScannerNativeComponent } from './native/native.component';
 
 @Component({
     selector: 'rdio-scanner',
@@ -58,28 +57,7 @@ export class RdioScannerComponent implements OnDestroy, OnInit {
         this.eventSubscription.unsubscribe();
     }
 
-    ngOnInit(): void {
-        /*
-         * BEGIN OF RED TAPE:
-         * 
-         * By modifying, deleting or disabling the following lines, you harm
-         * the open source project and its author.  Rdio Scanner represents a lot of
-         * investment in time, support, testing and hardware.
-         * 
-         * Be respectful, sponsor the project if you can, use native apps when possible.
-         * 
-         */
-        timer(10000).subscribe(() => {
-            const ua: string = navigator.userAgent;
-
-            if (ua.includes('Android') || ua.includes('iPad') || ua.includes('iPhone')) {
-                this.matSnackBar.openFromComponent(RdioScannerNativeComponent, { panelClass: 'snackbar-white' });
-            }
-        });
-        /**
-         * END OF RED TAPE.
-         */
-    }
+    ngOnInit(): void { }
 
     scrollTop(e: HTMLElement): void {
         setTimeout(() => e.scrollTo(0, 0));
