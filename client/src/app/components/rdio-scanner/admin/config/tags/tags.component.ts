@@ -18,7 +18,7 @@
  */
 
 import { Component, Input } from '@angular/core';
-import { FormArray, FormGroup } from '@angular/forms';
+import { UntypedFormArray, UntypedFormGroup } from '@angular/forms';
 import { RdioScannerAdminService } from '../../admin.service';
 
 @Component({
@@ -27,11 +27,11 @@ import { RdioScannerAdminService } from '../../admin.service';
     templateUrl: './tags.component.html',
 })
 export class RdioScannerAdminTagsComponent {
-    @Input() form: FormArray | undefined;
+    @Input() form: UntypedFormArray | undefined;
 
-    get tags(): FormGroup[] {
+    get tags(): UntypedFormGroup[] {
         return this.form?.controls
-            .sort((a, b) => (a.value.label || '').localeCompare(b.value.label || '')) as FormGroup[];
+            .sort((a, b) => (a.value.label || '').localeCompare(b.value.label || '')) as UntypedFormGroup[];
     }
 
     constructor(private adminService: RdioScannerAdminService) { }

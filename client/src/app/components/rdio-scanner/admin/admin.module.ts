@@ -69,9 +69,8 @@ import { RdioScannerAdminPasswordComponent } from './tools/password/password.com
         RdioScannerAdminToolsComponent,
         RdioScannerAdminUnitComponent,
     ],
-    entryComponents: [RdioScannerAdminSystemsSelectComponent],
     exports: [RdioScannerAdminComponent],
     imports: [AppSharedModule, HttpClientModule],
-    providers: [RdioScannerAdminService],
+    providers: [RdioScannerAdminService]
 })
 export class RdioScannerAdminModule { }

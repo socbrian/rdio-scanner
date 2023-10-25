@@ -18,7 +18,7 @@
  */
 
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { FormArray, FormControl, UntypedFormGroup } from '@angular/forms';
 import { RdioScannerAdminService, Group, Tag } from '../../../admin.service';
 
 @Component({
@@ -26,7 +26,7 @@ import { RdioScannerAdminService, Group, Tag } from '../../../admin.service';
     templateUrl: './talkgroup.component.html',
 })
 export class RdioScannerAdminTalkgroupComponent {
-    @Input() form: FormGroup | undefined;
+    @Input() form: UntypedFormGroup | undefined;
 
     @Output() blacklist = new EventEmitter<void>();
 

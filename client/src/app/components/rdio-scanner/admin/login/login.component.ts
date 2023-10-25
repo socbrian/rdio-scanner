@@ -18,7 +18,7 @@
  */
 
 import { Component, EventEmitter, Output } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { RdioScannerAdminService } from '../admin.service';
 
 @Component({
@@ -37,7 +37,7 @@ export class RdioScannerAdminLoginComponent {
 
     constructor(
         private adminService: RdioScannerAdminService,
-        private formBuilder: FormBuilder,
+        private formBuilder: UntypedFormBuilder,
     ) { }
 
     async login(password = this.form.get('password')?.value): Promise<void> {

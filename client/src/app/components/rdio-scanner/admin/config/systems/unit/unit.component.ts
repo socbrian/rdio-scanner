@@ -18,14 +18,14 @@
  */
 
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 
 @Component({
     selector: 'rdio-scanner-admin-unit',
     templateUrl: './unit.component.html',
 })
 export class RdioScannerAdminUnitComponent {
-    @Input() form: FormGroup | undefined;
+    @Input() form: UntypedFormGroup | undefined;
 
     @Output() remove = new EventEmitter<void>();
 }

@@ -18,7 +18,7 @@
  */
 
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, QueryList, ViewChildren, ViewEncapsulation } from '@angular/core';
-import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormArray, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { MatExpansionPanel } from '@angular/material/expansion';
 import { AdminEvent, RdioScannerAdminService, Config } from '../admin.service';
 
@@ -32,38 +32,38 @@ import { AdminEvent, RdioScannerAdminService, Config } from '../admin.service';
 export class RdioScannerAdminConfigComponent implements OnDestroy, OnInit {
     docker = false;
 
-    form: FormGroup | undefined;
+    form: UntypedFormGroup | undefined;
 
-    get access(): FormArray {
-        return this.form?.get('access') as FormArray;
+    get access(): UntypedFormArray {
+        return this.form?.get('access') as UntypedFormArray;
     }
 
-    get apiKeys(): FormArray {
-        return this.form?.get('apiKeys') as FormArray;
+    get apiKeys(): UntypedFormArray {
+        return this.form?.get('apiKeys') as UntypedFormArray;
     }
 
-    get dirWatch(): FormArray {
-        return this.form?.get('dirWatch') as FormArray;
+    get dirWatch(): UntypedFormArray {
+        return this.form?.get('dirWatch') as UntypedFormArray;
     }
 
-    get downstreams(): FormArray {
-        return this.form?.get('downstreams') as FormArray;
+    get downstreams(): UntypedFormArray {
+        return this.form?.get('downstreams') as UntypedFormArray;
     }
 
-    get groups(): FormArray {
-        return this.form?.get('groups') as FormArray;
+    get groups(): UntypedFormArray {
+        return this.form?.get('groups') as UntypedFormArray;
     }
 
-    get options(): FormGroup {
-        return this.form?.get('options') as FormGroup;
+    get options(): UntypedFormGroup {
+        return this.form?.get('options') as UntypedFormGroup;
     }
 
-    get systems(): FormArray {
-        return this.form?.get('systems') as FormArray;
+    get systems(): UntypedFormArray {
+        return this.form?.get('systems') as UntypedFormArray;
     }
 
-    get tags(): FormArray {
-        return this.form?.get('tags') as FormArray;
+    get tags(): UntypedFormArray {
+        return this.form?.get('tags') as UntypedFormArray;
     }
 
     private config: Config | undefined;
@@ -118,10 +118,10 @@ export class RdioScannerAdminConfigComponent implements OnDestroy, OnInit {
 
         this.groups.valueChanges.subscribe(() => {
             this.systems.controls.forEach((system) => {
-                const talkgroups = system.get('talkgroups') as FormArray;
+                const talkgroups = system.get('talkgroups') as UntypedFormArray;
 
                 talkgroups.controls.forEach((talkgroup) => {
-                    const groupId = talkgroup.get('groupId') as FormControl;
+                    const groupId = talkgroup.get('groupId') as UntypedFormControl;
 
                     groupId.updateValueAndValidity({ onlySelf: true });
 
@@ -134,10 +134,10 @@ export class RdioScannerAdminConfigComponent implements OnDestroy, OnInit {
 
         this.tags.valueChanges.subscribe(() => {
             this.systems.controls.forEach((system) => {
-                const talkgroups = system.get('talkgroups') as FormArray;
+                const talkgroups = system.get('talkgroups') as UntypedFormArray;
 
                 talkgroups.controls.forEach((talkgroup) => {
-                    const tagId = talkgroup.get('tagId') as FormControl;
+                    const tagId = talkgroup.get('tagId') as UntypedFormControl;
 
                     tagId.updateValueAndValidity({ onlySelf: true });
 

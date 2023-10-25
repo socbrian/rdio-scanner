@@ -19,7 +19,7 @@
 
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, EventEmitter, Input, Output, QueryList, ViewChildren } from '@angular/core';
-import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormArray, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { MatExpansionPanel } from '@angular/material/expansion';
 import { RdioScannerAdminService, Group, Tag } from '../../../admin.service';
 
@@ -28,7 +28,7 @@ import { RdioScannerAdminService, Group, Tag } from '../../../admin.service';
     templateUrl: './system.component.html',
 })
 export class RdioScannerAdminSystemComponent {
-    @Input() form = new FormGroup({});
+    @Input() form = new UntypedFormGroup({});
 
     @Input() groups: Group[] = [];
 
@@ -40,18 +40,18 @@ export class RdioScannerAdminSystemComponent {
 
     leds = this.adminService.getLeds();
 
-    get talkgroups(): FormGroup[] {
-        const talkgroups = this.form.get('talkgroups') as FormArray;
+    get talkgroups(): UntypedFormGroup[] {
+        const talkgroups = this.form.get('talkgroups') as UntypedFormArray;
 
         return talkgroups.controls
-            .sort((a, b) => (a.value.order || 0) - (b.value.order || 0)) as FormGroup[];
+            .sort((a, b) => (a.value.order || 0) - (b.value.order || 0)) as UntypedFormGroup[];
     }
 
-    get units(): FormGroup[] {
-        const units = this.form.get('units') as FormArray;
+    get units(): UntypedFormGroup[] {
+        const units = this.form.get('units') as UntypedFormArray;
 
         return units.controls
-            .sort((a, b) => (a.value.order || 0) - (b.value.order || 0)) as FormGroup[];
+            .sort((a, b) => (a.value.order || 0) - (b.value.order || 0)) as UntypedFormGroup[];
     }
 
     @ViewChildren(MatExpansionPanel) private panels: QueryList<MatExpansionPanel> | undefined;
@@ -59,7 +59,7 @@ export class RdioScannerAdminSystemComponent {
     constructor(private adminService: RdioScannerAdminService) { }
 
     addTalkgroup(): void {
-        const talkgroups = this.form.get('talkgroups') as FormArray;
+        const talkgroups = this.form.get('talkgroups') as UntypedFormArray;
 
         talkgroups.insert(0, this.adminService.newTalkgroupForm());
 
@@ -67,7 +67,7 @@ export class RdioScannerAdminSystemComponent {
     }
 
     addUnit(): void {
-        const units = this.form.get('units') as FormArray;
+        const units = this.form.get('units') as UntypedFormArray;
 
         units.insert(0, this.adminService.newUnitForm());
 
@@ -83,7 +83,7 @@ export class RdioScannerAdminSystemComponent {
             return;
         }
 
-        const blacklists = this.form?.get('blacklists') as FormControl;
+        const blacklists = this.form?.get('blacklists') as UntypedFormControl;
 
         blacklists.setValue(blacklists.value?.trim() ? `${blacklists.value},${id}` : `${id}`);
 
@@ -94,7 +94,7 @@ export class RdioScannerAdminSystemComponent {
         this.panels?.forEach((panel) => panel.close());
     }
 
-    drop(event: CdkDragDrop<FormGroup[]>): void {
+    drop(event: CdkDragDrop<UntypedFormGroup[]>): void {
         if (event.previousIndex !== event.currentIndex) {
             moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
 
@@ -105,7 +105,7 @@ export class RdioScannerAdminSystemComponent {
     }
 
     removeTalkgroup(index: number): void {
-        const talkgroups = this.form.get('talkgroups') as FormArray;
+        const talkgroups = this.form.get('talkgroups') as UntypedFormArray;
 
         talkgroups.removeAt(index);
 
@@ -113,7 +113,7 @@ export class RdioScannerAdminSystemComponent {
     }
 
     removeUnit(index: number): void {
-        const units = this.form.get('units') as FormArray;
+        const units = this.form.get('units') as UntypedFormArray;
 
         units.removeAt(index);
 

@@ -18,7 +18,7 @@
  */
 
 import { Component } from '@angular/core';
-import { AbstractControl, FormBuilder, ValidatorFn, ValidationErrors, Validators } from '@angular/forms';
+import { AbstractControl, UntypedFormBuilder, ValidatorFn, ValidationErrors, Validators } from '@angular/forms';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { RdioScannerAdminService } from '../../admin.service';
 
@@ -37,7 +37,7 @@ export class RdioScannerAdminPasswordComponent {
     constructor(
         private adminService: RdioScannerAdminService,
         private matSnackBar: MatSnackBar,
-        private ngFormBuilder: FormBuilder,
+        private ngFormBuilder: UntypedFormBuilder,
     ) { }
 
     private validatePassword(): ValidatorFn {

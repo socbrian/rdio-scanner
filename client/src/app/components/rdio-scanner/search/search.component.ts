@@ -18,7 +18,7 @@
  */
 
 import { ChangeDetectorRef, Component, OnDestroy, ViewChild } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { BehaviorSubject } from 'rxjs';
 import {
@@ -81,7 +81,7 @@ export class RdioScannerSearchComponent implements OnDestroy {
     constructor(
         private rdioScannerService: RdioScannerService,
         private ngChangeDetectorRef: ChangeDetectorRef,
-        private ngFormBuilder: FormBuilder,
+        private ngFormBuilder: UntypedFormBuilder,
     ) { }
 
     download(id: number): void {

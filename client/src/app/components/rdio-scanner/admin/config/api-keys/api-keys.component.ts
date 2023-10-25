@@ -20,7 +20,7 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, Input, QueryList, ViewChildren } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { FormArray, FormGroup } from '@angular/forms';
+import { UntypedFormArray, UntypedFormGroup } from '@angular/forms';
 import { MatExpansionPanel } from '@angular/material/expansion';
 import { RdioScannerAdminService } from '../../admin.service';
 import { RdioScannerAdminSystemsSelectComponent } from '../systems/select/select.component';
@@ -30,11 +30,11 @@ import { RdioScannerAdminSystemsSelectComponent } from '../systems/select/select
     templateUrl: './api-keys.component.html',
 })
 export class RdioScannerAdminApiKeysComponent {
-    @Input() form: FormArray | undefined;
+    @Input() form: UntypedFormArray | undefined;
 
-    get apiKeys(): FormGroup[] {
+    get apiKeys(): UntypedFormGroup[] {
         return this.form?.controls
-            .sort((a, b) => a.value.order - b.value.order) as FormGroup[];
+            .sort((a, b) => a.value.order - b.value.order) as UntypedFormGroup[];
     }
 
     @ViewChildren(MatExpansionPanel) private panels: QueryList<MatExpansionPanel> | undefined;
@@ -66,7 +66,7 @@ export class RdioScannerAdminApiKeysComponent {
         inputElement.setSelectionRange(0, 0);
     }
 
-    drop(event: CdkDragDrop<FormGroup[]>): void {
+    drop(event: CdkDragDrop<UntypedFormGroup[]>): void {
         if (event.previousIndex !== event.currentIndex) {
             moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
 
@@ -82,7 +82,7 @@ export class RdioScannerAdminApiKeysComponent {
         this.form?.markAsDirty();
     }
 
-    select(access: FormGroup): void {
+    select(access: UntypedFormGroup): void {
         const matDialogRef = this.matDialog.open(RdioScannerAdminSystemsSelectComponent, { data: access });
 
         matDialogRef.afterClosed().subscribe((data) => {

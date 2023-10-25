@@ -19,7 +19,7 @@
 
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, Input, QueryList, ViewChildren } from '@angular/core';
-import { FormArray, FormGroup } from '@angular/forms';
+import { UntypedFormArray, UntypedFormGroup } from '@angular/forms';
 import { MatExpansionPanel } from '@angular/material/expansion';
 import { RdioScannerAdminService } from '../../admin.service';
 
@@ -28,11 +28,11 @@ import { RdioScannerAdminService } from '../../admin.service';
     templateUrl: './systems.component.html',
 })
 export class RdioScannerAdminSystemsComponent {
-    @Input() form: FormArray | undefined;
+    @Input() form: UntypedFormArray | undefined;
 
-    get systems(): FormGroup[] {
+    get systems(): UntypedFormGroup[] {
         return this.form?.controls
-            .sort((a, b) => (a.value.order || 0) - (b.value.order || 0)) as FormGroup[];
+            .sort((a, b) => (a.value.order || 0) - (b.value.order || 0)) as UntypedFormGroup[];
     }
 
     @ViewChildren(MatExpansionPanel) private panels: QueryList<MatExpansionPanel> | undefined;
@@ -53,7 +53,7 @@ export class RdioScannerAdminSystemsComponent {
         this.panels?.forEach((panel) => panel.close());
     }
 
-    drop(event: CdkDragDrop<FormGroup[]>): void {
+    drop(event: CdkDragDrop<UntypedFormGroup[]>): void {
         if (event.previousIndex !== event.currentIndex) {
             moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
 

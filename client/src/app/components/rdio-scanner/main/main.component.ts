@@ -18,7 +18,7 @@
  */
 
 import { ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { MatInput } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription, timer } from 'rxjs';
@@ -138,7 +138,7 @@ export class RdioScannerMainComponent implements OnDestroy, OnInit {
         private rdioScannerService: RdioScannerService,
         private matSnackBar: MatSnackBar,
         private ngChangeDetectorRef: ChangeDetectorRef,
-        private ngFormBuilder: FormBuilder,
+        private ngFormBuilder: UntypedFormBuilder,
     ) { }
 
     authenticate(password = this.authForm.value.password): void {

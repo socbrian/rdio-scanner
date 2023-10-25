@@ -18,7 +18,7 @@
  */
 
 import { Component, ViewChild } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { BehaviorSubject } from 'rxjs';
 import { Log, LogsQuery, LogsQueryOptions, RdioScannerAdminService } from '../admin.service';
@@ -47,7 +47,7 @@ export class RdioScannerAdminLogsComponent {
 
     @ViewChild(MatPaginator) private paginator: MatPaginator | undefined;
 
-    constructor(private adminService: RdioScannerAdminService, private ngFormBuilder: FormBuilder) { }
+    constructor(private adminService: RdioScannerAdminService, private ngFormBuilder: UntypedFormBuilder) { }
 
     formHandler(): void {
         this.paginator?.firstPage();

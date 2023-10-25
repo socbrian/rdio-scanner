@@ -19,7 +19,7 @@
 
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { EventEmitter, Injectable, OnDestroy } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { firstValueFrom, timer } from 'rxjs';
 import { AppUpdateService } from '../../../shared/update/update.service';
@@ -225,7 +225,7 @@ export class RdioScannerAdminService implements OnDestroy {
     constructor(
         appUpdateService: AppUpdateService,
         private matSnackBar: MatSnackBar,
-        private ngFormBuilder: FormBuilder,
+        private ngFormBuilder: UntypedFormBuilder,
         private ngHttpClient: HttpClient,
     ) {
         this.configWebSocketOpen();
@@ -381,7 +381,7 @@ export class RdioScannerAdminService implements OnDestroy {
         }
     }
 
-    newAccessForm(access?: Access): FormGroup {
+    newAccessForm(access?: Access): UntypedFormGroup {
         return this.ngFormBuilder.group({
             _id: [access?._id],
             code: [access?.code, [Validators.required, this.validateAccessCode()]],
@@ -393,7 +393,7 @@ export class RdioScannerAdminService implements OnDestroy {
         });
     }
 
-    newApiKeyForm(apiKey?: ApiKey): FormGroup {
+    newApiKeyForm(apiKey?: ApiKey): UntypedFormGroup {
         return this.ngFormBuilder.group({
             _id: [apiKey?._id],
             disabled: [apiKey?.disabled],
@@ -404,7 +404,7 @@ export class RdioScannerAdminService implements OnDestroy {
         });
     }
 
-    newConfigForm(config?: Config): FormGroup {
+    newConfigForm(config?: Config): UntypedFormGroup {
         return this.ngFormBuilder.group({
             access: this.ngFormBuilder.array(config?.access?.map((access) => this.newAccessForm(access)) || []),
             apiKeys: this.ngFormBuilder.array(config?.apiKeys?.map((apiKey) => this.newApiKeyForm(apiKey)) || []),
@@ -417,7 +417,7 @@ export class RdioScannerAdminService implements OnDestroy {
         });
     }
 
-    newDirWatchForm(dirWatch?: DirWatch): FormGroup {
+    newDirWatchForm(dirWatch?: DirWatch): UntypedFormGroup {
         return this.ngFormBuilder.group({
             _id: [dirWatch?._id],
             delay: [typeof dirWatch?.delay === 'number' ? Math.max(2000, dirWatch?.delay) : 2000],
@@ -434,7 +434,7 @@ export class RdioScannerAdminService implements OnDestroy {
         });
     }
 
-    newDownstreamForm(downstream?: Downstream): FormGroup {
+    newDownstreamForm(downstream?: Downstream): UntypedFormGroup {
         return this.ngFormBuilder.group({
             _id: [downstream?._id],
             apiKey: [downstream?.apiKey, [Validators.required, this.validateApiKey()]],
@@ -445,21 +445,21 @@ export class RdioScannerAdminService implements OnDestroy {
         });
     }
 
-    newGroupForm(group?: Group): FormGroup {
+    newGroupForm(group?: Group): UntypedFormGroup {
         return this.ngFormBuilder.group({
             _id: [group?._id],
             label: [group?.label, Validators.required],
         });
     }
 
-    newTagForm(tag?: Tag): FormGroup {
+    newTagForm(tag?: Tag): UntypedFormGroup {
         return this.ngFormBuilder.group({
             _id: [tag?._id],
             label: [tag?.label, Validators.required],
         });
     }
 
-    newSystemForm(system?: System): FormGroup {
+    newSystemForm(system?: System): UntypedFormGroup {
         return this.ngFormBuilder.group({
             _id: [system?._id],
             autoPopulate: [system?.autoPopulate],
@@ -473,7 +473,7 @@ export class RdioScannerAdminService implements OnDestroy {
         });
     }
 
-    newTalkgroupForm(talkgroup?: Talkgroup): FormGroup {
+    newTalkgroupForm(talkgroup?: Talkgroup): UntypedFormGroup {
         return this.ngFormBuilder.group({
             frequency: [talkgroup?.frequency, Validators.min(0)],
             groupId: [talkgroup?.groupId, [Validators.required, this.validateGroup()]],
@@ -486,7 +486,7 @@ export class RdioScannerAdminService implements OnDestroy {
         });
     }
 
-    newUnitForm(unit?: Unit): FormGroup {
+    newUnitForm(unit?: Unit): UntypedFormGroup {
         return this.ngFormBuilder.group({
             id: [unit?.id, [Validators.required, Validators.min(0), this.validateId()]],
             label: [unit?.label, Validators.required],
@@ -494,7 +494,7 @@ export class RdioScannerAdminService implements OnDestroy {
         });
     }
 
-    newOptionsForm(options?: Options): FormGroup {
+    newOptionsForm(options?: Options): UntypedFormGroup {
         return this.ngFormBuilder.group({
             afsSystems: [options?.afsSystems, this.validateAfsSystems()],
             audioConversion: [options?.audioConversion],

@@ -19,7 +19,7 @@
 
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, Input, OnChanges, QueryList, ViewChildren } from '@angular/core';
-import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormArray, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { MatExpansionPanel } from '@angular/material/expansion';
 import { RdioScannerAdminService } from '../../admin.service';
 
@@ -28,27 +28,27 @@ import { RdioScannerAdminService } from '../../admin.service';
     templateUrl: './dir-watch.component.html',
 })
 export class RdioScannerAdminDirWatchComponent implements OnChanges {
-    @Input() form: FormArray | undefined;
+    @Input() form: UntypedFormArray | undefined;
 
-    get dirWatches(): FormGroup[] {
+    get dirWatches(): UntypedFormGroup[] {
         return this.form?.controls
-            .sort((a, b) => a.value.order - b.value.order) as FormGroup[];
+            .sort((a, b) => a.value.order - b.value.order) as UntypedFormGroup[];
     }
 
-    get systems(): FormGroup[] {
-        const systems = this.form?.root.get('systems') as FormArray;
+    get systems(): UntypedFormGroup[] {
+        const systems = this.form?.root.get('systems') as UntypedFormArray;
 
-        return systems.controls as FormGroup[];
+        return systems.controls as UntypedFormGroup[];
     }
 
-    get talkgroups(): FormGroup[][] {
+    get talkgroups(): UntypedFormGroup[][] {
         return this.systems.reduce((talkgroups, system) => {
-            const faTalkgroups = system.get('talkgroups') as FormArray;
+            const faTalkgroups = system.get('talkgroups') as UntypedFormArray;
 
-            talkgroups[system.value.id] = faTalkgroups.controls as FormGroup[];
+            talkgroups[system.value.id] = faTalkgroups.controls as UntypedFormGroup[];
 
             return talkgroups;
-        }, [] as FormGroup[][]);
+        }, [] as UntypedFormGroup[][]);
     }
 
     @ViewChildren(MatExpansionPanel) private panels: QueryList<MatExpansionPanel> | undefined;
@@ -80,7 +80,7 @@ export class RdioScannerAdminDirWatchComponent implements OnChanges {
         this.panels?.forEach((panel) => panel.close());
     }
 
-    drop(event: CdkDragDrop<FormGroup[]>): void {
+    drop(event: CdkDragDrop<UntypedFormGroup[]>): void {
         if (event.previousIndex !== event.currentIndex) {
             moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
 
@@ -96,15 +96,15 @@ export class RdioScannerAdminDirWatchComponent implements OnChanges {
         this.form?.markAsDirty();
     }
 
-    private registerOnChanges(control: FormGroup): void {
-        const mask = control.get('mask') as FormControl;
-        const type = control.get('type') as FormControl;
+    private registerOnChanges(control: UntypedFormGroup): void {
+        const mask = control.get('mask') as UntypedFormControl;
+        const type = control.get('type') as UntypedFormControl;
 
         mask.valueChanges.subscribe(() => this.validateIds(control));
         type.valueChanges.subscribe(() => this.validateIds(control));
     }
 
-    private validateIds(control: FormGroup): void {
+    private validateIds(control: UntypedFormGroup): void {
         const systemId = control.get('systemId');
         const talkgroupId = control.get('talkgroupId');
 

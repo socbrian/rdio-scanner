@@ -18,7 +18,7 @@
  */
 
 import { ChangeDetectorRef, Component, Inject, ViewEncapsulation } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormArray, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Access } from '../../../admin.service';
 
@@ -55,39 +55,39 @@ export class RdioScannerAdminSystemsSelectComponent {
     });
 
     configTalkgroups = this.configSystems.map((fgSystem) => {
-        const faTalkgroups = fgSystem.get('talkgroups') as FormArray;
+        const faTalkgroups = fgSystem.get('talkgroups') as UntypedFormArray;
 
-        return faTalkgroups.controls as FormGroup[];
+        return faTalkgroups.controls as UntypedFormGroup[];
     });
 
-    get configGroups(): FormGroup[] {
-        const faGroups = this.access.root.get('groups') as FormArray;
+    get configGroups(): UntypedFormGroup[] {
+        const faGroups = this.access.root.get('groups') as UntypedFormArray;
 
-        return faGroups.controls as FormGroup[];
+        return faGroups.controls as UntypedFormGroup[];
     }
 
-    get configSystems(): FormGroup[] {
-        const faSystems = this.access.root.get('systems') as FormArray;
+    get configSystems(): UntypedFormGroup[] {
+        const faSystems = this.access.root.get('systems') as UntypedFormArray;
 
-        return faSystems.controls as FormGroup[];
+        return faSystems.controls as UntypedFormGroup[];
     }
 
-    get configTags(): FormGroup[] {
-        const faTags = this.access.root.get('tags') as FormArray;
+    get configTags(): UntypedFormGroup[] {
+        const faTags = this.access.root.get('tags') as UntypedFormArray;
 
-        return faTags.controls as FormGroup[];
+        return faTags.controls as UntypedFormGroup[];
     }
 
     constructor(
-        @Inject(MAT_DIALOG_DATA) public access: FormGroup,
+        @Inject(MAT_DIALOG_DATA) public access: UntypedFormGroup,
         private matDialogRef: MatDialogRef<RdioScannerAdminSystemsSelectComponent>,
         private ngChangeDetectorRef: ChangeDetectorRef,
-        private ngFormBuilder: FormBuilder,
+        private ngFormBuilder: UntypedFormBuilder,
     ) {
-        const fcAll = this.select.get('all') as FormControl;
-        const faGroups = this.select.get('groups') as FormArray;
-        const faSystems = this.select.get('systems') as FormArray;
-        const faTags = this.select.get('tags') as FormArray;
+        const fcAll = this.select.get('all') as UntypedFormControl;
+        const faGroups = this.select.get('groups') as UntypedFormArray;
+        const faSystems = this.select.get('systems') as UntypedFormArray;
+        const faTags = this.select.get('tags') as UntypedFormArray;
 
         this.configGroups.forEach((configGroup) => {
             const fgGroup = this.ngFormBuilder.group({
@@ -99,7 +99,7 @@ export class RdioScannerAdminSystemsSelectComponent {
 
             fgGroup.valueChanges.subscribe((vGroup) => {
                 faSystems.controls.forEach((fgSystem) => {
-                    const faTalkgroups = fgSystem.get('talkgroups') as FormArray;
+                    const faTalkgroups = fgSystem.get('talkgroups') as UntypedFormArray;
 
                     faTalkgroups.controls.forEach((fgTalkgroup) => {
                         if (fgTalkgroup.value.groupId === vGroup._id && fgTalkgroup.value.checked !== vGroup.checked) {
@@ -146,7 +146,7 @@ export class RdioScannerAdminSystemsSelectComponent {
             });
 
             fcSystemAll.valueChanges.subscribe((vAll) => {
-                const faTalkgroups = fgSystem.get('talkgroups') as FormArray;
+                const faTalkgroups = fgSystem.get('talkgroups') as UntypedFormArray;
 
                 faTalkgroups.controls.forEach((fgTalkgroup) => fgTalkgroup.get('checked')?.setValue(vAll));
 
@@ -183,7 +183,7 @@ export class RdioScannerAdminSystemsSelectComponent {
 
             fgTag.valueChanges.subscribe((vTag) => {
                 faSystems.controls.forEach((fgSystem) => {
-                    const faTalkgroups = fgSystem.get('talkgroups') as FormArray;
+                    const faTalkgroups = fgSystem.get('talkgroups') as UntypedFormArray;
 
                     faTalkgroups.controls.forEach((fgTalkgroup) => {
                         if (fgTalkgroup.value.tagId === vTag._id && fgTalkgroup.value.checked !== vTag.checked) {
@@ -196,7 +196,7 @@ export class RdioScannerAdminSystemsSelectComponent {
 
         fcAll.valueChanges.subscribe((vAll) => {
             faSystems.controls.flatMap((fgSystem) => {
-                const faTalkgroups = fgSystem.get('talkgroups') as FormArray;
+                const faTalkgroups = fgSystem.get('talkgroups') as UntypedFormArray;
 
                 return faTalkgroups.controls;
             }).concat(faGroups.controls, faTags.controls).forEach((control) => {
@@ -240,7 +240,7 @@ export class RdioScannerAdminSystemsSelectComponent {
                             fgSystem.get('all')?.setValue(true);
 
                         } else if (Array.isArray(vSystem.talkgroups)) {
-                            const faTalkgroups = fgSystem.get('talkgroups') as FormArray;
+                            const faTalkgroups = fgSystem.get('talkgroups') as UntypedFormArray;
 
                             vSystem.talkgroups.forEach((talkgroup: { id: number } | number) => {
                                 const talkgroupId = typeof talkgroup === 'number' ? talkgroup : talkgroup.id;
@@ -288,16 +288,16 @@ export class RdioScannerAdminSystemsSelectComponent {
     }
 
     private rebuildGroupIndeterminates(): void {
-        const faGroups = this.select.get('groups') as FormArray;
+        const faGroups = this.select.get('groups') as UntypedFormArray;
 
-        const faSystems = this.select.get('systems') as FormArray;
+        const faSystems = this.select.get('systems') as UntypedFormArray;
 
         faGroups.controls.forEach((fgGroup, index) => {
             let off = 0;
             let on = 0;
 
             faSystems.controls.forEach((fgSystem) => {
-                const faTalkgroups = fgSystem.get('talkgroups') as FormArray;
+                const faTalkgroups = fgSystem.get('talkgroups') as UntypedFormArray;
 
                 faTalkgroups.controls.forEach((fgTalkgroup) => {
                     if (fgTalkgroup.value.groupId === fgGroup.value._id) {
@@ -318,16 +318,16 @@ export class RdioScannerAdminSystemsSelectComponent {
     }
 
     private rebuildTagIndeterminates(): void {
-        const faTags = this.select.get('tags') as FormArray;
+        const faTags = this.select.get('tags') as UntypedFormArray;
 
-        const faSystems = this.select.get('systems') as FormArray;
+        const faSystems = this.select.get('systems') as UntypedFormArray;
 
         faTags.controls.forEach((fgTag, index) => {
             let off = 0;
             let on = 0;
 
             faSystems.controls.forEach((fgSystem) => {
-                const faTalkgroups = fgSystem.get('talkgroups') as FormArray;
+                const faTalkgroups = fgSystem.get('talkgroups') as UntypedFormArray;
 
                 faTalkgroups.controls.forEach((fgTalkgroup) => {
                     if (fgTalkgroup.value.tagId === fgTag.value._id) {
