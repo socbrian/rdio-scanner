@@ -135,7 +135,6 @@ export interface Options {
     dimmerDelay?: number;
     disableDuplicateDetection?: boolean;
     duplicateDetectionTimeFrame?: number;
-    email?: string;
     keypadBeeps?: string;
     maxClients?: number;
     playbackGoesLive?: boolean;
@@ -501,7 +500,6 @@ export class RdioScannerAdminService implements OnDestroy {
             dimmerDelay: [options?.dimmerDelay, [Validators.required, Validators.min(0)]],
             disableDuplicateDetection: [options?.disableDuplicateDetection],
             duplicateDetectionTimeFrame: [options?.duplicateDetectionTimeFrame, [Validators.required, Validators.min(0)]],
-            email: [options?.email],
             keypadBeeps: [options?.keypadBeeps, Validators.required],
             maxClients: [options?.maxClients, [Validators.required, Validators.min(1)]],
             playbackGoesLive: [options?.playbackGoesLive],

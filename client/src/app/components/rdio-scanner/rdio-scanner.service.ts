@@ -906,7 +906,6 @@ export class RdioScannerService implements OnDestroy {
                     this.config = {
                         branding: typeof config.branding === 'string' ? config.branding : '',
                         dimmerDelay: typeof config.dimmerDelay === 'number' ? config.dimmerDelay : 5000,
-                        email: typeof config.email === 'string' ? config.email : '',
                         groups: typeof config.groups !== null && typeof config.groups === 'object' ? config.groups : {},
                         keypadBeeps: config.keypadBeeps !== null && typeof config.keypadBeeps === 'object' ? config.keypadBeeps : {},
                         playbackGoesLive: typeof config.playbackGoesLive === 'boolean' ? config.playbackGoesLive : false,
@@ -979,17 +978,12 @@ export class RdioScannerService implements OnDestroy {
 
                     if (data !== null && typeof data === 'object') {
                         const branding = data['branding'];
-                        const email = data['email'];
 
                         if (typeof branding === 'string') {
                             this.config.branding = branding;
                         }
 
-                        if (typeof email === 'string') {
-                            this.config.email = email;
-                        }
-
-                        if (this.config.branding || this.config.email) {
+                        if (this.config.branding) {
                             this.event.emit({ config: this.config });
                         }
                     }

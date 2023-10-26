@@ -32,7 +32,6 @@ type Options struct {
 	DimmerDelay                 uint   `json:"dimmerDelay"`
 	DisableDuplicateDetection   bool   `json:"disableDuplicateDetection"`
 	DuplicateDetectionTimeFrame uint   `json:"duplicateDetectionTimeFrame"`
-	Email                       string `json:"email"`
 	KeypadBeeps                 string `json:"keypadBeeps"`
 	MaxClients                  uint   `json:"maxClients"`
 	PlaybackGoesLive            bool   `json:"playbackGoesLive"`
@@ -117,11 +116,6 @@ func (options *Options) FromMap(m map[string]any) *Options {
 		options.DuplicateDetectionTimeFrame = uint(v)
 	default:
 		options.DuplicateDetectionTimeFrame = defaults.options.duplicateDetectionTimeFrame
-	}
-
-	switch v := m["email"].(type) {
-	case string:
-		options.Email = v
 	}
 
 	switch v := m["keypadBeeps"].(type) {
@@ -271,11 +265,6 @@ func (options *Options) Read(db *Database) error {
 				options.DuplicateDetectionTimeFrame = uint(v)
 			}
 
-			switch v := m["email"].(type) {
-			case string:
-				options.Email = v
-			}
-
 			switch v := m["keypadBeeps"].(type) {
 			case string:
 				options.KeypadBeeps = v
@@ -380,7 +369,6 @@ func (options *Options) Write(db *Database) error {
 		"dimmerDelay":                 options.DimmerDelay,
 		"disableDuplicateDetection":   options.DisableDuplicateDetection,
 		"duplicateDetectionTimeFrame": options.DuplicateDetectionTimeFrame,
-		"email":                       options.Email,
 		"keypadBeeps":                 options.KeypadBeeps,
 		"maxClients":                  options.MaxClients,
 		"playbackGoesLive":            options.PlaybackGoesLive,

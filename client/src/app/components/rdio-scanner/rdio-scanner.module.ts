@@ -23,7 +23,6 @@ import { AppSharedModule } from '../../shared/shared.module';
 import { RdioScannerComponent } from './rdio-scanner.component';
 import { RdioScannerService } from './rdio-scanner.service';
 import { RdioScannerMainComponent } from './main/main.component';
-import { RdioScannerSupportComponent } from './main/support/support.component';
 import { RdioScannerSearchComponent } from './search/search.component';
 import { RdioScannerSelectComponent } from './select/select.component';
 import { WindowRef } from './windowRef';
@@ -34,7 +33,6 @@ import { WindowRef } from './windowRef';
         RdioScannerMainComponent,
         RdioScannerSearchComponent,
         RdioScannerSelectComponent,
-        RdioScannerSupportComponent,
     ],
     exports: [RdioScannerComponent],
     imports: [
