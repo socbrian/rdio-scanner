@@ -18,7 +18,7 @@
  */
 
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { EventEmitter, Injectable, OnDestroy } from '@angular/core';
+import { EventEmitter, Injectable, OnDestroy, inject } from '@angular/core';
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
 import { firstValueFrom, timer } from 'rxjs';
@@ -222,12 +222,12 @@ export class RdioScannerAdminService implements OnDestroy {
         window?.sessionStorage?.setItem(SESSION_STORAGE_KEY, token);
     }
 
-    constructor(
-        appUpdateService: AppUpdateService,
-        private matSnackBar: MatSnackBar,
-        private ngFormBuilder: UntypedFormBuilder,
-        private ngHttpClient: HttpClient,
-    ) {
+    private ngFormBuilder = inject(UntypedFormBuilder);
+    appUpdateService = inject(AppUpdateService);
+    private matSnackBar = inject(MatSnackBar);
+    private ngHttpClient = inject(HttpClient);
+
+    constructor() {
         this.configWebSocketOpen();
     }
 

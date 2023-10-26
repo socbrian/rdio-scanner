@@ -17,7 +17,7 @@
  * ****************************************************************************
  */
 
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { UntypedFormArray, UntypedFormGroup } from '@angular/forms';
 import { RdioScannerAdminService } from '../../admin.service';
 
@@ -27,14 +27,14 @@ import { RdioScannerAdminService } from '../../admin.service';
     templateUrl: './tags.component.html',
 })
 export class RdioScannerAdminTagsComponent {
+    private adminService = inject(RdioScannerAdminService)
+
     @Input() form: UntypedFormArray | undefined;
 
     get tags(): UntypedFormGroup[] {
         return this.form?.controls
             .sort((a, b) => (a.value.label || '').localeCompare(b.value.label || '')) as UntypedFormGroup[];
     }
-
-    constructor(private adminService: RdioScannerAdminService) { }
 
     add(): void {
         const id = this.tags.reduce((pv, cv) => cv.value._id >= pv ? cv.value._id + 1 : pv, 0);

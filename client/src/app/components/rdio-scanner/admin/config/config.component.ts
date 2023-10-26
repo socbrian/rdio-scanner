@@ -17,7 +17,7 @@
  * ****************************************************************************
  */
 
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, QueryList, ViewChildren, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, QueryList, ViewChildren, ViewEncapsulation, inject } from '@angular/core';
 import { UntypedFormArray, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { MatExpansionPanel } from '@angular/material/expansion';
 import { AdminEvent, RdioScannerAdminService, Config } from '../admin.service';
@@ -30,6 +30,9 @@ import { AdminEvent, RdioScannerAdminService, Config } from '../admin.service';
     templateUrl: './config.component.html',
 })
 export class RdioScannerAdminConfigComponent implements OnDestroy, OnInit {
+    private adminService = inject(RdioScannerAdminService)
+    private ngChangeDetectorRef = inject(ChangeDetectorRef)
+
     docker = false;
 
     form: UntypedFormGroup | undefined;
@@ -89,11 +92,6 @@ export class RdioScannerAdminConfigComponent implements OnDestroy, OnInit {
     });
 
     @ViewChildren(MatExpansionPanel) private panels: QueryList<MatExpansionPanel> | undefined;
-
-    constructor(
-        private adminService: RdioScannerAdminService,
-        private ngChangeDetectorRef: ChangeDetectorRef,
-    ) { }
 
     ngOnDestroy(): void {
         this.eventSubscription.unsubscribe();

@@ -18,7 +18,7 @@
  */
 
 import { DOCUMENT } from '@angular/common';
-import { Component, EventEmitter, Inject, Output } from '@angular/core';
+import { Component, EventEmitter, Inject, Output, inject } from '@angular/core';
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
 import { Config, RdioScannerAdminService } from '../../admin.service';
 
@@ -28,13 +28,12 @@ import { Config, RdioScannerAdminService } from '../../admin.service';
     templateUrl: './import-export-config.component.html',
 })
 export class RdioScannerAdminImportExportConfigComponent {
-    @Output() config = new EventEmitter<Config>();
+    private adminService = inject(RdioScannerAdminService)
+    @Inject(DOCUMENT)
+    private document: Document | undefined;
+    private matSnackBar = inject(MatSnackBar)
 
-    constructor(
-        private adminService: RdioScannerAdminService,
-        @Inject(DOCUMENT) private document: Document,
-        private matSnackBar: MatSnackBar,
-    ) { }
+    @Output() config = new EventEmitter<Config>();
 
     async export(): Promise<void> {
         const config = await this.adminService.getConfig();
@@ -46,18 +45,18 @@ export class RdioScannerAdminImportExportConfigComponent {
         const fileType = 'application/json';
         const fileUri = `data:${fileType};base64,${window.btoa(file)}`;
 
-        const el = this.document.createElement('a');
+        const el = this.document?.createElement('a');
 
-        el.style.display = 'none';
+        if (el) el.style.display = 'none';
 
-        el.setAttribute('href', fileUri);
-        el.setAttribute('download', fileName);
+        el?.setAttribute('href', fileUri);
+        el?.setAttribute('download', fileName);
 
-        this.document.body.appendChild(el);
+        if (el) this.document?.body.appendChild(el);
 
-        el.click();
+        el?.click();
 
-        this.document.body.removeChild(el);
+        if (el) this.document?.body.removeChild(el);
     }
 
     async import(event: Event): Promise<void> {

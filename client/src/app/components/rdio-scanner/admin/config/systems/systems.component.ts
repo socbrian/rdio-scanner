@@ -18,7 +18,7 @@
  */
 
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { Component, Input, QueryList, ViewChildren } from '@angular/core';
+import { Component, Input, QueryList, ViewChildren, inject } from '@angular/core';
 import { UntypedFormArray, UntypedFormGroup } from '@angular/forms';
 import { MatExpansionPanel } from '@angular/material/expansion';
 import { RdioScannerAdminService } from '../../admin.service';
@@ -28,6 +28,8 @@ import { RdioScannerAdminService } from '../../admin.service';
     templateUrl: './systems.component.html',
 })
 export class RdioScannerAdminSystemsComponent {
+    private adminService = inject(RdioScannerAdminService)
+
     @Input() form: UntypedFormArray | undefined;
 
     get systems(): UntypedFormGroup[] {
@@ -36,8 +38,6 @@ export class RdioScannerAdminSystemsComponent {
     }
 
     @ViewChildren(MatExpansionPanel) private panels: QueryList<MatExpansionPanel> | undefined;
-
-    constructor(private adminService: RdioScannerAdminService) { }
 
     add(): void {
         const system = this.adminService.newSystemForm();

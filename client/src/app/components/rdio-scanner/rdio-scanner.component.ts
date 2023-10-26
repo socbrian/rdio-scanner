@@ -17,7 +17,7 @@
  * ****************************************************************************
  */
 
-import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
 import { timer } from 'rxjs';
@@ -30,6 +30,10 @@ import { RdioScannerService } from './rdio-scanner.service';
     templateUrl: './rdio-scanner.component.html',
 })
 export class RdioScannerComponent implements OnDestroy, OnInit {
+    private rdioScannerService = inject(RdioScannerService)
+    private ngElementRef = inject(ElementRef)
+    private matSnackBar = inject(MatSnackBar)
+
     private eventSubscription = this.rdioScannerService.event.subscribe((event: RdioScannerEvent) => this.eventHandler(event));
 
     private livefeedMode: RdioScannerLivefeedMode = RdioScannerLivefeedMode.Offline;
@@ -37,12 +41,6 @@ export class RdioScannerComponent implements OnDestroy, OnInit {
     @ViewChild('searchPanel') private searchPanel: MatSidenav | undefined;
 
     @ViewChild('selectPanel') private selectPanel: MatSidenav | undefined;
-
-    constructor(
-        private matSnackBar: MatSnackBar,
-        private ngElementRef: ElementRef,
-        private rdioScannerService: RdioScannerService,
-    ) { }
 
     @HostListener('window:beforeunload', ['$event'])
     exitNotification(event: BeforeUnloadEvent): void {

@@ -17,7 +17,7 @@
  * ****************************************************************************
  */
 
-import { ChangeDetectorRef, Component, OnDestroy, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, ViewChild, inject } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
 import { BehaviorSubject } from 'rxjs';
@@ -39,6 +39,10 @@ import { RdioScannerService } from '../rdio-scanner.service';
     templateUrl: './search.component.html',
 })
 export class RdioScannerSearchComponent implements OnDestroy {
+    private ngFormBuilder = inject(UntypedFormBuilder);
+    private rdioScannerService = inject(RdioScannerService);
+    private ngChangeDetectorRef = inject(ChangeDetectorRef);
+
     call: RdioScannerCall | undefined;
     callPending: number | undefined;
 
@@ -77,12 +81,6 @@ export class RdioScannerSearchComponent implements OnDestroy {
     private offset = 0;
 
     @ViewChild(MatPaginator, { read: MatPaginator }) private paginator: MatPaginator | undefined;
-
-    constructor(
-        private rdioScannerService: RdioScannerService,
-        private ngChangeDetectorRef: ChangeDetectorRef,
-        private ngFormBuilder: UntypedFormBuilder,
-    ) { }
 
     download(id: number): void {
         this.rdioScannerService.loadAndDownload(id);

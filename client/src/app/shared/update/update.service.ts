@@ -17,7 +17,7 @@
  * ****************************************************************************
  */
 
-import { ApplicationRef, Injectable } from '@angular/core';
+import { ApplicationRef, Injectable, inject } from '@angular/core';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { SwUpdate, VersionEvent } from '@angular/service-worker';
 import { AppUpdateComponent } from './update.component';
@@ -26,12 +26,12 @@ import { first } from 'rxjs/operators';
 
 @Injectable()
 export class AppUpdateService {
-  constructor(
-    private matDialog: MatDialog,
-    private ngAppRef: ApplicationRef,
-    private ngSwUpdate: SwUpdate,
-  ) {
-    if (!ngSwUpdate.isEnabled) {
+  private matDialog = inject(MatDialog);
+  private ngAppRef = inject(ApplicationRef);
+  private ngSwUpdate = inject(SwUpdate);
+
+  constructor() {
+    if (!this.ngSwUpdate.isEnabled) {
       return;
     }
 

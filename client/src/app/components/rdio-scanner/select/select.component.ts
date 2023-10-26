@@ -17,7 +17,7 @@
  * ****************************************************************************
  */
 
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, inject } from '@angular/core';
 import {
     RdioScannerAvoidOptions,
     RdioScannerBeepStyle,
@@ -38,6 +38,8 @@ import { RdioScannerService } from '../rdio-scanner.service';
     templateUrl: './select.component.html',
 })
 export class RdioScannerSelectComponent implements OnDestroy {
+    private rdioScannerService = inject(RdioScannerService)
+
     categories: RdioScannerCategory[] | undefined;
 
     map: RdioScannerLivefeedMap = {};
@@ -47,8 +49,6 @@ export class RdioScannerSelectComponent implements OnDestroy {
     tagsToggle: boolean | undefined;
 
     private eventSubscription = this.rdioScannerService.event.subscribe((event: RdioScannerEvent) => this.eventHandler(event));
-
-    constructor(private rdioScannerService: RdioScannerService) { }
 
     avoid(options?: RdioScannerAvoidOptions): void {
         if (options?.all == true) {

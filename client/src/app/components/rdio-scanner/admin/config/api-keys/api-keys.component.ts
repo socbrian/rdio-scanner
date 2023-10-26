@@ -18,7 +18,7 @@
  */
 
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { Component, Input, QueryList, ViewChildren } from '@angular/core';
+import { Component, Input, QueryList, ViewChildren, inject } from '@angular/core';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { UntypedFormArray, UntypedFormGroup } from '@angular/forms';
 import { MatExpansionPanel } from '@angular/material/expansion';
@@ -30,6 +30,9 @@ import { RdioScannerAdminSystemsSelectComponent } from '../systems/select/select
     templateUrl: './api-keys.component.html',
 })
 export class RdioScannerAdminApiKeysComponent {
+    private adminService = inject(RdioScannerAdminService)
+    private matDialog = inject(MatDialog)
+
     @Input() form: UntypedFormArray | undefined;
 
     get apiKeys(): UntypedFormGroup[] {
@@ -38,8 +41,6 @@ export class RdioScannerAdminApiKeysComponent {
     }
 
     @ViewChildren(MatExpansionPanel) private panels: QueryList<MatExpansionPanel> | undefined;
-
-    constructor(private adminService: RdioScannerAdminService, private matDialog: MatDialog) { }
 
     add(): void {
         const apiKey = this.adminService.newApiKeyForm({

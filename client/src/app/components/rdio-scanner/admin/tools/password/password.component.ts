@@ -17,7 +17,7 @@
  * ****************************************************************************
  */
 
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { AbstractControl, UntypedFormBuilder, ValidatorFn, ValidationErrors, Validators } from '@angular/forms';
 import { MatLegacySnackBar as MatSnackBar, MatLegacySnackBarConfig as MatSnackBarConfig } from '@angular/material/legacy-snack-bar';
 import { RdioScannerAdminService } from '../../admin.service';
@@ -28,17 +28,15 @@ import { RdioScannerAdminService } from '../../admin.service';
     templateUrl: './password.component.html',
 })
 export class RdioScannerAdminPasswordComponent {
-    form = this.ngFormBuilder.group({
+  private ngFormBuilder = inject(UntypedFormBuilder);
+  private adminService = inject(RdioScannerAdminService)
+  private matSnackBar = inject(MatSnackBar)
+
+  form = this.ngFormBuilder.group({
         currentPassword: [null, Validators.required],
         newPassword: [null, [Validators.required, Validators.minLength(8)]],
         verifyNewPassword: [null, [Validators.required, this.validatePassword()]],
     });
-
-    constructor(
-        private adminService: RdioScannerAdminService,
-        private matSnackBar: MatSnackBar,
-        private ngFormBuilder: UntypedFormBuilder,
-    ) { }
 
     private validatePassword(): ValidatorFn {
         return (control: AbstractControl): ValidationErrors | null => {

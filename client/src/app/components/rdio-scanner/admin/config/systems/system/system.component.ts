@@ -18,7 +18,7 @@
  */
 
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { Component, EventEmitter, Input, Output, QueryList, ViewChildren } from '@angular/core';
+import { Component, EventEmitter, Input, Output, QueryList, ViewChildren, inject } from '@angular/core';
 import { UntypedFormArray, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { MatExpansionPanel } from '@angular/material/expansion';
 import { RdioScannerAdminService, Group, Tag } from '../../../admin.service';
@@ -28,6 +28,8 @@ import { RdioScannerAdminService, Group, Tag } from '../../../admin.service';
     templateUrl: './system.component.html',
 })
 export class RdioScannerAdminSystemComponent {
+    private adminService = inject(RdioScannerAdminService)
+
     @Input() form = new UntypedFormGroup({});
 
     @Input() groups: Group[] = [];
@@ -55,8 +57,6 @@ export class RdioScannerAdminSystemComponent {
     }
 
     @ViewChildren(MatExpansionPanel) private panels: QueryList<MatExpansionPanel> | undefined;
-
-    constructor(private adminService: RdioScannerAdminService) { }
 
     addTalkgroup(): void {
         const talkgroups = this.form.get('talkgroups') as UntypedFormArray;

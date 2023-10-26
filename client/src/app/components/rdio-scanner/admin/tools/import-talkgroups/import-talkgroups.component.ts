@@ -17,7 +17,7 @@
  * ****************************************************************************
  */
 
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, inject } from '@angular/core';
 import { Config, RdioScannerAdminService } from '../../admin.service';
 
 @Component({
@@ -26,6 +26,8 @@ import { Config, RdioScannerAdminService } from '../../admin.service';
     templateUrl: './import-talkgroups.component.html',
 })
 export class RdioScannerAdminImportTalkgroupsComponent {
+    private adminService = inject(RdioScannerAdminService)
+
     @Output() config = new EventEmitter<Config>();
 
     csv: string[][] = [];
@@ -39,8 +41,6 @@ export class RdioScannerAdminImportTalkgroupsComponent {
     mode = 0;
 
     tableColumns = ['id', 'label', 'description', 'tag', 'group', 'action'];
-
-    constructor(private adminService: RdioScannerAdminService) { }
 
     async import(): Promise<void> {
         const config = await this.adminService.getConfig();

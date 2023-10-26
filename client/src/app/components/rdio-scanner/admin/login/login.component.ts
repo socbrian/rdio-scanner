@@ -17,7 +17,7 @@
  * ****************************************************************************
  */
 
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, inject } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { RdioScannerAdminService } from '../admin.service';
 
@@ -27,6 +27,9 @@ import { RdioScannerAdminService } from '../admin.service';
     templateUrl: './login.component.html',
 })
 export class RdioScannerAdminLoginComponent {
+    private adminService = inject(RdioScannerAdminService)
+    private formBuilder = inject(UntypedFormBuilder)
+
     @Output() loggedIn = new EventEmitter<void>();
 
     form = this.formBuilder.group({
@@ -34,11 +37,6 @@ export class RdioScannerAdminLoginComponent {
     });
 
     message = '';
-
-    constructor(
-        private adminService: RdioScannerAdminService,
-        private formBuilder: UntypedFormBuilder,
-    ) { }
 
     async login(password = this.form.get('password')?.value): Promise<void> {
         if (!password) {

@@ -17,9 +17,9 @@
  * ****************************************************************************
  */
 
-import { ChangeDetectorRef, Component, Inject, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, ViewEncapsulation, inject } from '@angular/core';
 import { UntypedFormArray, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Access } from '../../../admin.service';
 
 interface System {
@@ -40,6 +40,12 @@ interface Talkgroup {
     templateUrl: './select.component.html',
 })
 export class RdioScannerAdminSystemsSelectComponent {
+    @Inject(MAT_DIALOG_DATA)
+    public access: UntypedFormGroup | undefined;
+    private matDialogRef = inject(MatDialogRef<RdioScannerAdminSystemsSelectComponent>)
+    private ngChangeDetectorRef = inject(ChangeDetectorRef)
+    private ngFormBuilder = inject(UntypedFormBuilder);
+
     indeterminate = {
         everything: false,
         groups: [] as boolean[],
@@ -61,29 +67,24 @@ export class RdioScannerAdminSystemsSelectComponent {
     });
 
     get configGroups(): UntypedFormGroup[] {
-        const faGroups = this.access.root.get('groups') as UntypedFormArray;
+        const faGroups = this.access?.root.get('groups') as UntypedFormArray;
 
         return faGroups.controls as UntypedFormGroup[];
     }
 
     get configSystems(): UntypedFormGroup[] {
-        const faSystems = this.access.root.get('systems') as UntypedFormArray;
+        const faSystems = this.access?.root.get('systems') as UntypedFormArray;
 
         return faSystems.controls as UntypedFormGroup[];
     }
 
     get configTags(): UntypedFormGroup[] {
-        const faTags = this.access.root.get('tags') as UntypedFormArray;
+        const faTags = this.access?.root.get('tags') as UntypedFormArray;
 
         return faTags.controls as UntypedFormGroup[];
     }
 
-    constructor(
-        @Inject(MAT_DIALOG_DATA) public access: UntypedFormGroup,
-        private matDialogRef: MatDialogRef<RdioScannerAdminSystemsSelectComponent>,
-        private ngChangeDetectorRef: ChangeDetectorRef,
-        private ngFormBuilder: UntypedFormBuilder,
-    ) {
+    constructor() {
         const fcAll = this.select.get('all') as UntypedFormControl;
         const faGroups = this.select.get('groups') as UntypedFormArray;
         const faSystems = this.select.get('systems') as UntypedFormArray;
@@ -222,7 +223,7 @@ export class RdioScannerAdminSystemsSelectComponent {
             fcAll.setValue(!off && on, { emitEvent: false });
         });
 
-        const vAccess: Access = this.access.value;
+        const vAccess: Access = this.access?.value;
 
         if (vAccess.systems === '*') {
             this.select.get('all')?.setValue(true);

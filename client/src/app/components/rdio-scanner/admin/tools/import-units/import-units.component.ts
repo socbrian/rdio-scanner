@@ -17,7 +17,7 @@
  * ****************************************************************************
  */
 
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
 import { Config, RdioScannerAdminService, System } from '../../admin.service';
 
 @Component({
@@ -26,6 +26,8 @@ import { Config, RdioScannerAdminService, System } from '../../admin.service';
     templateUrl: './import-units.component.html',
 })
 export class RdioScannerAdminImportUnitsComponent implements OnInit{
+    private adminService = inject(RdioScannerAdminService)
+
     @Output() config = new EventEmitter<Config>();
 
     baseConfig: Config = {};
@@ -35,8 +37,6 @@ export class RdioScannerAdminImportUnitsComponent implements OnInit{
     system: System | undefined;
 
     tableColumns = ['id', 'label', 'action'];
-
-    constructor(private adminService: RdioScannerAdminService) { }
 
     async ngOnInit(): Promise<void> {
         this.baseConfig = await this.adminService.getConfig();

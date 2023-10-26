@@ -17,7 +17,7 @@
  * ****************************************************************************
  */
 
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { FormArray, FormControl, UntypedFormGroup } from '@angular/forms';
 import { RdioScannerAdminService, Group, Tag } from '../../../admin.service';
 
@@ -26,6 +26,8 @@ import { RdioScannerAdminService, Group, Tag } from '../../../admin.service';
     templateUrl: './talkgroup.component.html',
 })
 export class RdioScannerAdminTalkgroupComponent {
+    private adminService = inject(RdioScannerAdminService)
+
     @Input() form: UntypedFormGroup | undefined;
 
     @Output() blacklist = new EventEmitter<void>();
@@ -41,6 +43,4 @@ export class RdioScannerAdminTalkgroupComponent {
     get tags(): Tag[] {
         return this.form?.root.get('tags')?.value as Tag[];
     }
-
-    constructor(private adminService: RdioScannerAdminService) { }
 }

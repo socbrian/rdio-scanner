@@ -17,7 +17,7 @@
  * ****************************************************************************
  */
 
-import { Component, Inject, Optional } from '@angular/core';
+import { Component, Inject, Optional, inject } from '@angular/core';
 import { MAT_LEGACY_SNACK_BAR_DATA as MAT_SNACK_BAR_DATA, MatLegacySnackBarRef as MatSnackBarRef } from '@angular/material/legacy-snack-bar';
 import { timer } from 'rxjs';
 
@@ -27,15 +27,16 @@ import { timer } from 'rxjs';
     templateUrl: './support.component.html',
 })
 export class RdioScannerSupportComponent {
-    countdown: number = 10;
+    private matSnackBarRef = inject(MatSnackBarRef<RdioScannerSupportComponent>);
+    @Inject(MAT_SNACK_BAR_DATA)
+    public data: { email: string } | undefined;
+
+    countdown = 10;
 
     email: string | undefined;
 
-    constructor(
-        @Optional() private matSnackBarRef: MatSnackBarRef<RdioScannerSupportComponent>,
-        @Inject(MAT_SNACK_BAR_DATA) public data: { email: string },
-    ) {
-        this.email = data?.email;
+    constructor() {
+        this.email = this.data?.email;
 
         this.wait();
     }

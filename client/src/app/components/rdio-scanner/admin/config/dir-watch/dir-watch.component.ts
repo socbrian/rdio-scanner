@@ -18,7 +18,7 @@
  */
 
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { Component, Input, OnChanges, QueryList, ViewChildren } from '@angular/core';
+import { Component, Input, OnChanges, QueryList, ViewChildren, inject } from '@angular/core';
 import { UntypedFormArray, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { MatExpansionPanel } from '@angular/material/expansion';
 import { RdioScannerAdminService } from '../../admin.service';
@@ -28,6 +28,8 @@ import { RdioScannerAdminService } from '../../admin.service';
     templateUrl: './dir-watch.component.html',
 })
 export class RdioScannerAdminDirWatchComponent implements OnChanges {
+    private adminService = inject(RdioScannerAdminService)
+
     @Input() form: UntypedFormArray | undefined;
 
     get dirWatches(): UntypedFormGroup[] {
@@ -52,8 +54,6 @@ export class RdioScannerAdminDirWatchComponent implements OnChanges {
     }
 
     @ViewChildren(MatExpansionPanel) private panels: QueryList<MatExpansionPanel> | undefined;
-
-    constructor(private adminService: RdioScannerAdminService) { }
 
     ngOnChanges(): void {
         if (this.form) {

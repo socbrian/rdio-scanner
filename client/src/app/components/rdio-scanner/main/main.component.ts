@@ -17,7 +17,7 @@
  * ****************************************************************************
  */
 
-import { ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild, inject } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { MatLegacyInput as MatInput } from '@angular/material/legacy-input';
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
@@ -44,6 +44,11 @@ import { RdioScannerSupportComponent } from './support/support.component';
     templateUrl: './main.component.html',
 })
 export class RdioScannerMainComponent implements OnDestroy, OnInit {
+    private ngFormBuilder = inject(UntypedFormBuilder);
+    private rdioScannerService = inject(RdioScannerService);
+    private matSnackBar = inject(MatSnackBar)
+    private ngChangeDetectorRef = inject(ChangeDetectorRef)
+
     auth = false;
     authForm = this.ngFormBuilder.group({ password: [] });
 
@@ -133,13 +138,6 @@ export class RdioScannerMainComponent implements OnDestroy, OnInit {
     private dimmerTimer: Subscription | undefined;
 
     private eventSubscription = this.rdioScannerService.event.subscribe((event: RdioScannerEvent) => this.eventHandler(event));
-
-    constructor(
-        private rdioScannerService: RdioScannerService,
-        private matSnackBar: MatSnackBar,
-        private ngChangeDetectorRef: ChangeDetectorRef,
-        private ngFormBuilder: UntypedFormBuilder,
-    ) { }
 
     authenticate(password = this.authForm.value.password): void {
         this.authForm.disable();

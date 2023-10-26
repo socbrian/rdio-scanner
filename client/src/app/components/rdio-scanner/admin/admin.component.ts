@@ -17,7 +17,7 @@
  * ****************************************************************************
  */
 
-import { Component, OnDestroy, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, ViewEncapsulation, inject } from '@angular/core';
 import { AdminEvent, RdioScannerAdminService, Group, Tag } from './admin.service';
 
 @Component({
@@ -27,6 +27,8 @@ import { AdminEvent, RdioScannerAdminService, Group, Tag } from './admin.service
     templateUrl: './admin.component.html',
 })
 export class RdioScannerAdminComponent implements OnDestroy {
+    private adminService = inject(RdioScannerAdminService)
+
     authenticated = this.adminService.authenticated;
 
     groups: Group[] = [];
@@ -38,8 +40,6 @@ export class RdioScannerAdminComponent implements OnDestroy {
             this.authenticated = event.authenticated || false;
         }
     });
-
-    constructor(private adminService: RdioScannerAdminService) { }
 
     ngOnDestroy(): void {
         this.eventSubscription.unsubscribe();

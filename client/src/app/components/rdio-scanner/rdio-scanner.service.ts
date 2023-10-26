@@ -18,7 +18,7 @@
  */
 
 import { DOCUMENT } from '@angular/common';
-import { EventEmitter, Inject, Injectable, OnDestroy } from '@angular/core';
+import { EventEmitter, Inject, Injectable, OnDestroy, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { interval, Subscription, timer } from 'rxjs';
 import { takeWhile } from 'rxjs/operators';
@@ -111,11 +111,13 @@ export class RdioScannerService implements OnDestroy {
 
     private websocket: WebSocket | undefined;
 
-    constructor(
-        appUpdateService: AppUpdateService,
-        private router: Router,
-        @Inject(DOCUMENT) private document: Document,
-    ) {
+    appUpdateService = inject(AppUpdateService)
+    private router = inject(Router)
+
+    @Inject(DOCUMENT)
+    private document: Document | undefined;
+
+    constructor() {
         this.bootstrapAudio();
 
         this.initializeInstanceId();
@@ -803,18 +805,18 @@ export class RdioScannerService implements OnDestroy {
             const fileType = call.audioType || 'audio/*';
             const fileUri = `data:${fileType};base64,${window.btoa(file)}`;
 
-            const el = this.document.createElement('a');
+            const el = this.document?.createElement('a');
 
-            el.style.display = 'none';
+            if (el) el.style.display = 'none';
 
-            el.setAttribute('href', fileUri);
-            el.setAttribute('download', fileName);
+            el?.setAttribute('href', fileUri);
+            el?.setAttribute('download', fileName);
 
-            this.document.body.appendChild(el);
+            if (el) this.document?.body.appendChild(el);
 
-            el.click();
+            el?.click();
 
-            this.document.body.removeChild(el);
+            if (el) this.document?.body.removeChild(el);
         }
     }
 
@@ -1190,7 +1192,6 @@ export class RdioScannerService implements OnDestroy {
             this.websocket.send(JSON.stringify(message));
         }
     }
-
 
     private transformCall(call: RdioScannerCall): RdioScannerCall {
         if (call && Array.isArray(this.config?.systems)) {

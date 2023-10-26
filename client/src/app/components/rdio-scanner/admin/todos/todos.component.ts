@@ -17,12 +17,12 @@
  * ****************************************************************************
  */
 
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { AdminEvent, Config, RdioScannerAdminService } from '../admin.service';
 
 interface Todo {
     level: 'info' | 'warn';
-    message: String;
+    message: string;
 }
 
 @Component({
@@ -31,6 +31,8 @@ interface Todo {
     templateUrl: './todos.component.html',
 })
 export class RdioScannerAdminTodosComponent implements OnDestroy, OnInit {
+    private adminService = inject(RdioScannerAdminService)
+
     todos: Todo[] = [];
 
     private config: Config | undefined;
@@ -48,8 +50,6 @@ export class RdioScannerAdminTodosComponent implements OnDestroy, OnInit {
     });
 
     private passwordNeedChange = this.adminService.passwordNeedChange;
-
-    constructor(private adminService: RdioScannerAdminService) { }
 
     ngOnDestroy(): void {
         this.eventSubscription.unsubscribe();

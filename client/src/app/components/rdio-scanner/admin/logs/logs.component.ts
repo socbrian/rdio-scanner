@@ -17,7 +17,7 @@
  * ****************************************************************************
  */
 
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, inject } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
 import { BehaviorSubject } from 'rxjs';
@@ -29,7 +29,10 @@ import { Log, LogsQuery, LogsQueryOptions, RdioScannerAdminService } from '../ad
     templateUrl: './logs.component.html',
 })
 export class RdioScannerAdminLogsComponent {
-    form = this.ngFormBuilder.group({
+  private ngFormBuilder = inject(UntypedFormBuilder);
+  private adminService = inject(RdioScannerAdminService)
+
+  form = this.ngFormBuilder.group({
         date: [null],
         level: [null],
         sort: [-1],
@@ -46,8 +49,6 @@ export class RdioScannerAdminLogsComponent {
     private offset = 0;
 
     @ViewChild(MatPaginator) private paginator: MatPaginator | undefined;
-
-    constructor(private adminService: RdioScannerAdminService, private ngFormBuilder: UntypedFormBuilder) { }
 
     formHandler(): void {
         this.paginator?.firstPage();
