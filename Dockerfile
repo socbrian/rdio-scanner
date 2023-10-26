@@ -10,14 +10,14 @@ COPY client/. ./
 
 RUN npm run build
 
-FROM golang:1.21.3-alpine as binary
+FROM golang:1.21.3 as binary
 
 WORKDIR /app
 
 COPY server/. server/.
 COPY --from=frontend /app/dist/ server/webapp/
 
-RUN cd server && go build -o /rdio-scanner
+RUN cd server && CGO_ENABLED=0 go build -o /rdio-scanner
 
 FROM alpine:3.18.4
 
