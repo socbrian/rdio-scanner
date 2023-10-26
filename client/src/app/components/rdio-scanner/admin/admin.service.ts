@@ -731,9 +731,9 @@ export class RdioScannerAdminService implements OnDestroy {
 
             const masks = ['#DATE', '#GROUP', '#HZ', '#KHZ', '#MHZ', '#SYS', '#SYSLBL', '#TAG', '#TG', '#TGAFS', '#TGHZ', '#TGKHZ', '#TGLBL', '#TGMHZ', '#TIME', '#UNIT', '#ZTIME'];
 
-            const metas = control.value.match(/(#[A-Z]+)/g) || [];
+            const metas = control.value.match(/(#[A-Z]+)/g);
 
-            const count = metas.reduce((c, m) => {
+            const count = metas?.reduce((c, m) => {
                 if (masks.includes(m)) {
                     c++;
                 }
