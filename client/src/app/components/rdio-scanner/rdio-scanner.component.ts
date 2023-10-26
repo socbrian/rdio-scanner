@@ -17,22 +17,24 @@
  * ****************************************************************************
  */
 
-import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
+import { Component, ElementRef, HostListener, OnDestroy, ViewChild, inject } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
 import { timer } from 'rxjs';
 import { RdioScannerEvent, RdioScannerLivefeedMode } from './rdio-scanner';
 import { RdioScannerService } from './rdio-scanner.service';
+import { WindowRef } from './windowRef';
 
 @Component({
     selector: 'rdio-scanner',
     styleUrls: ['./rdio-scanner.component.scss'],
     templateUrl: './rdio-scanner.component.html',
 })
-export class RdioScannerComponent implements OnDestroy, OnInit {
+export class RdioScannerComponent implements OnDestroy {
     private rdioScannerService = inject(RdioScannerService)
     private ngElementRef = inject(ElementRef)
     private matSnackBar = inject(MatSnackBar)
+    window = inject(WindowRef)
 
     private eventSubscription = this.rdioScannerService.event.subscribe((event: RdioScannerEvent) => this.eventHandler(event));
 
@@ -51,11 +53,20 @@ export class RdioScannerComponent implements OnDestroy, OnInit {
         }
     }
 
+    @HostListener('window:popstate', ['$event'])
+    onMobileBack(event: PopStateEvent) {
+        if (this.searchPanel?.opened) {
+            this.searchPanel.close();
+        } else if (this.selectPanel?.opened) {
+            this.selectPanel.close();
+        } else {
+            this.window.nativeWindow.history.back();
+        }
+    }
+
     ngOnDestroy(): void {
         this.eventSubscription.unsubscribe();
     }
-
-    ngOnInit(): void { }
 
     scrollTop(e: HTMLElement): void {
         setTimeout(() => e.scrollTo(0, 0));

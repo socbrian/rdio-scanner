@@ -3,7 +3,7 @@
         <div class="panel search">
             <mat-toolbar>
                 <div>
-                    <button mat-icon-button (click)="searchPanel.close()">
+                    <button mat-icon-button (click)="searchPanel.close(); window.nativeWindow.history.back()">
                         <mat-icon>arrow_forward</mat-icon>
                     </button>
                 </div>
@@ -19,7 +19,7 @@
         <div class="panel select">
             <mat-toolbar>
                 <div>
-                    <button mat-icon-button (click)="selectPanel.close()">
+                    <button mat-icon-button (click)="selectPanel.close(); window.nativeWindow.history.back()">
                         <mat-icon>arrow_back</mat-icon>
                     </button>
                 </div>
@@ -33,8 +33,8 @@
     </mat-sidenav>
     <mat-sidenav-content>
         <rdio-scanner-main
-            (openSearchPanel)="scrollTop(scrollableSearch); searchPanel.open(); searchComponent.searchCalls()"
-            (openSelectPanel)="scrollTop(scrollableSelect); selectPanel.open();"
+            (openSearchPanel)="scrollTop(scrollableSearch); searchPanel.open(); window.nativeWindow.history.pushState({ modal: true }, ''); searchComponent.searchCalls()"
+            (openSelectPanel)="scrollTop(scrollableSelect); selectPanel.open(); window.nativeWindow.history.pushState({ modal: true }, '');"
             (toggleFullscreen)="toggleFullscreen()">
         </rdio-scanner-main>
     </mat-sidenav-content>
