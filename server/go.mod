@@ -3,13 +3,13 @@ module rdio-scanner/server
 go 1.21
 
 require (
-	github.com/dhowden/tag v0.0.0-20220618230019-adf36e896086
+	github.com/dhowden/tag v0.0.0-20230630033851-978a0926ee25
 	github.com/fsnotify/fsnotify v1.5.4
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/golang-jwt/jwt/v4 v4.4.2
-	github.com/google/uuid v1.3.0
+	github.com/google/uuid v1.3.1
 	github.com/gorilla/websocket v1.5.0
-	github.com/kardianos/service v1.2.1
+	github.com/kardianos/service v1.2.2
 	golang.org/x/crypto v0.0.0-20220926161630-eccd6366d1be
 	gopkg.in/ini.v1 v1.67.0
 	modernc.org/sqlite v1.19.1
