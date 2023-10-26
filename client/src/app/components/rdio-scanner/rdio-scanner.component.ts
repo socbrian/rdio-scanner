@@ -59,8 +59,6 @@ export class RdioScannerComponent implements OnDestroy {
             this.searchPanel.close();
         } else if (this.selectPanel?.opened) {
             this.selectPanel.close();
-        } else {
-            this.window.nativeWindow.history.back();
         }
     }
 
