@@ -7,7 +7,7 @@
     "packageRules": [
         {
             "separateMinorPatch": true,
-            "matchPackageNames": ["typescript", "rxjs", "tslib"]
+            "matchPackageNames": ["typescript", "rxjs"]
         }
     ]
 }
