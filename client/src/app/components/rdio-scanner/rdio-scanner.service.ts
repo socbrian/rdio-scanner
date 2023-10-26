@@ -18,10 +18,12 @@
  */
 
 import { DOCUMENT } from '@angular/common';
-import { EventEmitter, Inject, Injectable, OnDestroy, inject } from '@angular/core';
+import { ApplicationRef, EventEmitter, Inject, Injectable, OnDestroy, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { interval, Subscription, timer } from 'rxjs';
-import { takeWhile } from 'rxjs/operators';
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
+import { concat, interval, Subscription, timer } from 'rxjs';
+import { takeWhile, first } from 'rxjs/operators';
+import { SwUpdate, VersionEvent } from '@angular/service-worker';
 import {
     RdioScannerAvoidOptions,
     RdioScannerBeepStyle,
@@ -115,7 +117,26 @@ export class RdioScannerService implements OnDestroy {
     @Inject(DOCUMENT)
     private document: Document | undefined;
 
+    private ngAppRef = inject(ApplicationRef);
+    private ngSwUpdate = inject(SwUpdate);
+    private matSnackBar = inject(MatSnackBar);
+
     constructor() {
+        if (this.ngSwUpdate.isEnabled) {
+            concat(
+                this.ngAppRef.isStable.pipe(first((stable) => stable === true)),
+                interval(5 * 60 * 1000),
+            ).subscribe(() => this.ngSwUpdate.checkForUpdate());
+
+            this.ngSwUpdate.versionUpdates.subscribe((event: VersionEvent) => {
+                if (event.type === 'VERSION_READY') {
+                    this.ngSwUpdate.activateUpdate().then(() => {
+                        this.matSnackBar.open('Frontend updated, reloading...', '', { duration: 5000 });
+                        setTimeout(() => document.location.reload(), 5000);
+                    });
+                }
+            });
+        }
         this.bootstrapAudio();
 
         this.initializeInstanceId();
