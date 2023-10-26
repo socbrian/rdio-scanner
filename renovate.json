@@ -3,5 +3,11 @@
     "extends": [
         "local>USA-RedDragon/renovate-configs"
     ],
-    "includeForks": true
+    "includeForks": true,
+    "packageRules": [
+        {
+            "separateMinorPatch": true,
+            "matchPackageNames": ["typescript", "rxjs", "tslib"]
+        }
+    ]
 }
