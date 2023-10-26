@@ -22,7 +22,6 @@ import { EventEmitter, Inject, Injectable, OnDestroy, inject } from '@angular/co
 import { Router } from '@angular/router';
 import { interval, Subscription, timer } from 'rxjs';
 import { takeWhile } from 'rxjs/operators';
-import { AppUpdateService } from '../../shared/update/update.service';
 import {
     RdioScannerAvoidOptions,
     RdioScannerBeepStyle,
@@ -111,7 +110,6 @@ export class RdioScannerService implements OnDestroy {
 
     private websocket: WebSocket | undefined;
 
-    appUpdateService = inject(AppUpdateService)
     private router = inject(Router)
 
     @Inject(DOCUMENT)

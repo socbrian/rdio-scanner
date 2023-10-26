@@ -22,7 +22,6 @@ import { EventEmitter, Injectable, OnDestroy, inject } from '@angular/core';
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
 import { firstValueFrom, timer } from 'rxjs';
-import { AppUpdateService } from '../../../shared/update/update.service';
 
 export interface Access {
     _id?: string;
@@ -223,7 +222,6 @@ export class RdioScannerAdminService implements OnDestroy {
     }
 
     private ngFormBuilder = inject(UntypedFormBuilder);
-    appUpdateService = inject(AppUpdateService);
     private matSnackBar = inject(MatSnackBar);
     private ngHttpClient = inject(HttpClient);
 
