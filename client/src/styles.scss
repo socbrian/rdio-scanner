@@ -1,21 +1,25 @@
-@import "@angular/material/theming";
+@use '@angular/material' as mat;
 @import "./styles/material-icons";
 @import "./styles/roboto-fonts";
 
+@include mat.core();
+@include mat.legacy-core();
+
 $font-family: Roboto, "Helvetica Neue", sans-serif;
 
-$custom-typography: mat-typography-config(
-	$font-family: $font-family,
-);
+$primary: mat.define-palette(mat.$grey-palette, 800, 50);
+$accent: mat.define-palette(mat.$green-palette);
 
-@include mat-core($custom-typography);
+$theme: mat.define-light-theme((
+  color: (
+    primary: $primary,
+    accent: $accent,
+  ),
+  typography: mat.define-typography-config(),
+));
 
-$primary: mat-palette($mat-grey, 800, 50);
-$accent: mat-palette($mat-green);
-
-$theme: mat-light-theme($primary, $accent);
-
-@include angular-material-theme($theme);
+@include mat.all-component-themes($theme);
+@include mat.all-legacy-component-themes($theme);
 
 body {
 	font-family: $font-family;
