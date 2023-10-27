@@ -31,14 +31,6 @@ export class RdioScannerSettingsService {
         this.setItem('disableBeep', disableBeep ? '1' : '0');
     }
 
-    public get startFeedAutomatically(): boolean {
-        return this.getItem('startFeedAutomatically') === '1';
-    }
-
-    public set startFeedAutomatically(startFeedAutomatically: boolean) {
-        this.setItem('startFeedAutomatically', startFeedAutomatically ? '1' : '0');
-    }
-
     private getItem(key: string): string | null {
         return window?.localStorage?.getItem(SETTINGS_LOCALSTORAGE_KEY + '_' + key);
     }

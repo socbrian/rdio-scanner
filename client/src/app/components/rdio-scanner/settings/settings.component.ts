@@ -40,27 +40,11 @@ export class RdioScannerSettingsComponent {
         this.rdioScannerSettingsService.disableBeep = disableBeep;
     }
 
-    get startFeedAutomatically(): boolean {
-        return this.rdioScannerSettingsService.startFeedAutomatically;
-    }
-
-    private set startFeedAutomatically(startFeedAutomatically: boolean) {
-        this.rdioScannerSettingsService.startFeedAutomatically = startFeedAutomatically;
-    }
-
     private get disableBeepLabel(): string {
         return this.disableBeep ? 'Disable' : 'Enable';
     }
 
-    private get startFeedAutomaticallyLabel(): string {
-        return this.startFeedAutomatically ? 'Disable' : 'Enable';
-    }
-
     toggleDisableBeep(): void {
         this.disableBeep = !this.disableBeep;
-    }
-
-    toggleStartFeedAutomatically(): void {
-        this.startFeedAutomatically = !this.startFeedAutomatically;
     }
 }

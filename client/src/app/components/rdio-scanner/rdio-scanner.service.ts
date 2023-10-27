@@ -146,10 +146,6 @@ export class RdioScannerService implements OnDestroy {
         this.readLivefeedMap();
 
         this.openWebsocket();
-
-        if (this.rdioSettingsService.startFeedAutomatically) {
-            this.startLivefeed();
-        }
     }
 
     authenticate(password: string): void {
