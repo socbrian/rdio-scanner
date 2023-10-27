@@ -1,0 +1,32 @@
+:host {
+  box-sizing: border-box;
+  display: block;
+  padding: 8px;
+  user-select: none;
+}
+
+.rdio-settings {
+  border-radius: 4px;
+  margin-bottom: 16px;
+  overflow: hidden;
+  padding: 0;
+
+  .row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 12px;
+
+    .rdio-button,
+    .dummy-rdio-button {
+      box-sizing: content-box;
+      flex: 1;
+      line-height: normal;
+    }
+
+    .spacer {
+      display: block;
+      width: 24px;
+    }
+  }
+}

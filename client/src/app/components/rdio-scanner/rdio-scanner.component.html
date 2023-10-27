@@ -31,10 +31,27 @@
             </div>
         </div>
     </mat-sidenav>
+    <mat-sidenav #settingsPanel [autoFocus]="false" [disableClose]="true" position="end">
+        <div class="panel select">
+            <mat-toolbar>
+                <div>
+                    <button mat-icon-button (click)="settingsPanel.close(); window.nativeWindow.history.back()">
+                        <mat-icon>arrow_back</mat-icon>
+                    </button>
+                </div>
+            </mat-toolbar>
+            <div #scrollableSelect>
+                <div>
+                    <rdio-scanner-settings></rdio-scanner-settings>
+                </div>
+            </div>
+        </div>
+    </mat-sidenav>
     <mat-sidenav-content>
         <rdio-scanner-main
             (openSearchPanel)="scrollTop(scrollableSearch); searchPanel.open(); window.nativeWindow.history.pushState({ modal: true }, ''); searchComponent.searchCalls()"
             (openSelectPanel)="scrollTop(scrollableSelect); selectPanel.open(); window.nativeWindow.history.pushState({ modal: true }, '');"
+            (openSettingsPanel)="scrollTop(scrollableSelect); settingsPanel.open(); window.nativeWindow.history.pushState({ modal: true }, '');"
             (toggleFullscreen)="toggleFullscreen()">
         </rdio-scanner-main>
     </mat-sidenav-content>

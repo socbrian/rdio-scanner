@@ -39,6 +39,7 @@ import {
     RdioScannerPlaybackList,
     RdioScannerSearchOptions,
 } from './rdio-scanner';
+import { RdioScannerSettingsService } from './settings/settings.service';
 
 declare global {
     interface Window {
@@ -120,6 +121,7 @@ export class RdioScannerService implements OnDestroy {
     private ngAppRef = inject(ApplicationRef);
     private ngSwUpdate = inject(SwUpdate);
     private matSnackBar = inject(MatSnackBar);
+    private rdioSettingsService = inject(RdioScannerSettingsService);
 
     constructor() {
         if (this.ngSwUpdate.isEnabled) {
@@ -144,6 +146,10 @@ export class RdioScannerService implements OnDestroy {
         this.readLivefeedMap();
 
         this.openWebsocket();
+
+        if (this.rdioSettingsService.startFeedAutomatically) {
+            this.startLivefeed();
+        }
     }
 
     authenticate(password: string): void {
@@ -243,6 +249,9 @@ export class RdioScannerService implements OnDestroy {
     }
 
     beep(style = RdioScannerBeepStyle.Activate): Promise<void> {
+        if (this.rdioSettingsService.disableBeep) {
+            return Promise.resolve();
+        }
         return new Promise((resolve) => {
             const context = this.beepContext;
 

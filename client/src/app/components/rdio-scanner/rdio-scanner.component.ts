@@ -44,6 +44,8 @@ export class RdioScannerComponent implements OnDestroy {
 
     @ViewChild('selectPanel') private selectPanel: MatSidenav | undefined;
 
+    @ViewChild('settingsPanel') private settingsPanel: MatSidenav | undefined;
+
     @HostListener('window:beforeunload', ['$event'])
     exitNotification(event: BeforeUnloadEvent): void {
         if (this.livefeedMode !== RdioScannerLivefeedMode.Offline) {
@@ -59,6 +61,8 @@ export class RdioScannerComponent implements OnDestroy {
             this.searchPanel.close();
         } else if (this.selectPanel?.opened) {
             this.selectPanel.close();
+        } else if (this.settingsPanel?.opened) {
+            this.settingsPanel.close();
         }
     }
 
@@ -79,6 +83,7 @@ export class RdioScannerComponent implements OnDestroy {
 
         this.searchPanel?.close();
         this.selectPanel?.close();
+        this.settingsPanel?.close();
     }
 
     toggleFullscreen(): void {

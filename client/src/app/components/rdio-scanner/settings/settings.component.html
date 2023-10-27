@@ -1,0 +1,16 @@
+<ng-container>
+    <h2>Settings</h2>
+    <div class="rdio-settings">
+        <div class="row">
+            <button class="rdio-button" (click)="toggleDisableBeep()"
+                [ngClass]="{ off: !disableBeep, on: disableBeep }">
+                DISABLE<br>BEEPS
+            </button>
+            <div class="spacer"></div>
+            <button class="rdio-button" (click)="toggleStartFeedAutomatically()"
+                [ngClass]="{ off: !startFeedAutomatically, on: startFeedAutomatically }">
+                START FEED<br>AUTOMATICALLY
+            </button>
+        </div>
+    </div>
+</ng-container>

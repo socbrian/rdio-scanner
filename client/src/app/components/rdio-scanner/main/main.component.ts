@@ -124,6 +124,8 @@ export class RdioScannerMainComponent implements OnDestroy, OnInit {
 
     @Output() openSelectPanel = new EventEmitter<void>();
 
+    @Output() openSettingsPanel = new EventEmitter<void>();
+
     @Output() toggleFullscreen = new EventEmitter<void>();
 
     @ViewChild('password', { read: MatInput }) private authPassword: MatInput | undefined;
@@ -332,6 +334,21 @@ export class RdioScannerMainComponent implements OnDestroy, OnInit {
             this.rdioScannerService.beep();
 
             this.openSelectPanel.emit();
+        }
+    }
+
+    showSettingsPanel(): void {
+        if (!this.config) {
+            return;
+        }
+
+        if (this.auth) {
+            this.authFocus();
+
+        } else {
+            this.rdioScannerService.beep();
+
+            this.openSettingsPanel.emit();
         }
     }
 

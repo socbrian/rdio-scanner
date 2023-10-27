@@ -25,6 +25,7 @@ import { RdioScannerService } from './rdio-scanner.service';
 import { RdioScannerMainComponent } from './main/main.component';
 import { RdioScannerSearchComponent } from './search/search.component';
 import { RdioScannerSelectComponent } from './select/select.component';
+import { RdioScannerSettingsModule } from './settings/settings.module';
 import { WindowRef } from './windowRef';
 
 @NgModule({
@@ -37,6 +38,7 @@ import { WindowRef } from './windowRef';
     exports: [RdioScannerComponent],
     imports: [
         AppSharedModule,
+        RdioScannerSettingsModule,
     ],
     providers: [
         RdioScannerService,
