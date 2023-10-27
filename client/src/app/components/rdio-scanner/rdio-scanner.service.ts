@@ -131,8 +131,8 @@ export class RdioScannerService implements OnDestroy {
             this.ngSwUpdate.versionUpdates.subscribe((event: VersionEvent) => {
                 if (event.type === 'VERSION_READY') {
                     this.ngSwUpdate.activateUpdate().then(() => {
-                        this.matSnackBar.open('Frontend updated, reloading...', '', { duration: 5000 });
-                        setTimeout(() => document.location.reload(), 5000);
+                        this.matSnackBar.open('Frontend updated, reloading...', '', { duration: 3000 });
+                        setTimeout(() => document.location.reload(), 3000);
                     });
                 }
             });
