@@ -115,8 +115,7 @@ export class RdioScannerService implements OnDestroy {
 
     private router = inject(Router)
 
-    @Inject(DOCUMENT)
-    private document: Document | undefined;
+    private document = inject(DOCUMENT);
 
     private ngAppRef = inject(ApplicationRef);
     private ngSwUpdate = inject(SwUpdate);
@@ -829,18 +828,18 @@ export class RdioScannerService implements OnDestroy {
             const fileType = call.audioType || 'audio/*';
             const fileUri = `data:${fileType};base64,${window.btoa(file)}`;
 
-            const el = this.document?.createElement('a');
+            const el = this.document.createElement('a');
 
-            if (el) el.style.display = 'none';
+            el.style.display = 'none';
 
-            el?.setAttribute('href', fileUri);
-            el?.setAttribute('download', fileName);
+            el.setAttribute('href', fileUri);
+            el.setAttribute('download', fileName);
 
-            if (el) this.document?.body.appendChild(el);
+            this.document.body.appendChild(el);
 
-            el?.click();
+            el.click();
 
-            if (el) this.document?.body.removeChild(el);
+            this.document.body.removeChild(el);
         }
     }
 
