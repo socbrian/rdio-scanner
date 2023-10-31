@@ -29,9 +29,10 @@ import (
 )
 
 const (
-	DbTypeMariadb string = "mariadb"
-	DbTypeMysql   string = "mysql"
-	DbTypeSqlite  string = "sqlite"
+	DbTypeMariadb    string = "mariadb"
+	DbTypeMysql      string = "mysql"
+	DbTypeSqlite     string = "sqlite"
+	DbTypePostgresql string = "postgresql"
 )
 
 type Config struct {
@@ -88,7 +89,7 @@ func NewConfig() *Config {
 	flag.StringVar(&config.DbName, "db_name", "", "database name")
 	flag.StringVar(&config.DbPassword, "db_pass", "", "database password")
 	flag.UintVar(&config.DbPort, "db_port", defaultDbPort, "database host port")
-	flag.StringVar(&config.DbType, "db_type", defaultDbType, fmt.Sprintf("database type, one of %s, %s, %s", DbTypeSqlite, DbTypeMariadb, DbTypeMysql))
+	flag.StringVar(&config.DbType, "db_type", defaultDbType, fmt.Sprintf("database type, one of %s, %s, %s, or %s", DbTypeSqlite, DbTypeMariadb, DbTypeMysql, DbTypePostgresql))
 	flag.StringVar(&config.DbUsername, "db_user", "", "database user name")
 	flag.StringVar(&config.ConfigFile, "config", defaultConfigFile, "server config file")
 	flag.StringVar(&config.Listen, "listen", defaultListen, "listening address")
@@ -148,7 +149,7 @@ func NewConfig() *Config {
 			}
 		}
 
-		if !(config.DbType == DbTypeMariadb || config.DbType == DbTypeMysql || config.DbType == DbTypeSqlite) {
+		if !(config.DbType == DbTypeMariadb || config.DbType == DbTypeMysql || config.DbType == DbTypePostgresql || config.DbType == DbTypeSqlite) {
 			fmt.Printf("unknown database type %s\n", config.DbType)
 			return nil
 		}

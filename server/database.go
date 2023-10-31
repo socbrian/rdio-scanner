@@ -57,6 +57,7 @@ func NewDatabase(config *Config) *Database {
 			log.Fatal(err)
 		}
 
+	case DbTypePostgresql:
 	default:
 		log.Fatalf("unknown database type %s\n", config.DbType)
 	}
