@@ -45,6 +45,7 @@ type Config struct {
 	DbName           string
 	DbUsername       string
 	DbPassword       string
+	MetricsPort      uint
 	Listen           string
 	daemon           *Daemon
 	newAdminPassword string
@@ -111,6 +112,7 @@ func NewConfig() *Config {
 	flag.UintVar(&config.DbPort, "db_port", defaultDbPort, "database host port")
 	flag.StringVar(&config.DbType, "db_type", defaultDbType, fmt.Sprintf("database type, one of %s, %s, %s, or %s", DbTypeSqlite, DbTypeMariadb, DbTypeMysql, DbTypePostgresql))
 	flag.StringVar(&config.DbUsername, "db_user", "", "database user name")
+	flag.UintVar(&config.MetricsPort, "metrics_port", 0, "port for prometheus metrics")
 	flag.StringVar(&config.ConfigFile, "config", defaultConfigFile, "server config file")
 	flag.StringVar(&config.Listen, "listen", defaultListen, "listening address")
 	flag.StringVar(&config.newAdminPassword, "admin_password", "", "change admin password")
@@ -129,6 +131,16 @@ func NewConfig() *Config {
 	dbNameEnv := os.Getenv("DB_NAME")
 	if dbNameEnv != "" {
 		config.DbName = dbNameEnv
+	}
+
+	metricsPortEnvStr := os.Getenv("METRICS_PORT")
+	if metricsPortEnvStr != "" {
+		metricsPort, err := strconv.Atoi(metricsPortEnvStr)
+		if err == nil {
+			config.MetricsPort = uint(metricsPort)
+		} else {
+			log.Fatalf("error: %s\n", err.Error())
+		}
 	}
 
 	if !config.isBaseDirWritable() {

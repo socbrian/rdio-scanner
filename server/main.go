@@ -167,6 +167,8 @@ func main() {
 		log.Printf("main interface at http://%s:%s", hostname, port)
 	}
 
+	go CreateMetricsServer(config)
+
 	newServer := func(addr string, tlsConfig *tls.Config) *http.Server {
 		s := &http.Server{
 			Addr:         addr,
