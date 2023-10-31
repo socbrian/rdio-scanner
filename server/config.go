@@ -51,15 +51,7 @@ type Config struct {
 }
 
 func NewConfig() *Config {
-	const (
-		defaultAdminUrl   = "/admin"
-		defaultConfigFile = "rdio-scanner.ini"
-		defaultDbType     = DbTypeSqlite
-		defaultDbFile     = "rdio-scanner.db"
-		defaultDbHost     = "localhost"
-		defaultDbPort     = uint(3306)
-		defaultListen     = ":3000"
-	)
+	const defaultConfigFile = "rdio-scanner.ini"
 
 	var (
 		command       = flag.String(COMMAND_ARG, "", fmt.Sprintf("advanced administrative tasks (use -%s %s for usage)", COMMAND_ARG, COMMAND_HELP))
@@ -67,6 +59,34 @@ func NewConfig() *Config {
 		configSave    = flag.Bool("config_save", false, fmt.Sprintf("save configuration to %s", defaultConfigFile))
 		serviceAction = flag.String("service", "", "service command, one of start, stop, restart, install, uninstall")
 		version       = flag.Bool("version", false, "show application version")
+	)
+
+	defaultDbType := os.Getenv("DB_TYPE")
+	if defaultDbType == "" {
+		defaultDbType = DbTypeSqlite
+	}
+
+	defaultDbHost := os.Getenv("DB_HOST")
+	if defaultDbHost == "" {
+		defaultDbHost = "localhost"
+	}
+
+	dbPortStr := os.Getenv("DB_PORT")
+	if dbPortStr == "" {
+		dbPortStr = "3306"
+	}
+	defaultDbPort := uint(0)
+	tmp, err := strconv.Atoi(dbPortStr)
+	if err != nil {
+		defaultDbPort = uint(tmp)
+	} else {
+		defaultDbPort = uint(tmp)
+	}
+
+	const (
+		defaultAdminUrl = "/admin"
+		defaultDbFile   = "rdio-scanner.db"
+		defaultListen   = ":3000"
 	)
 
 	if exe, err := os.Executable(); err == nil {
@@ -95,6 +115,21 @@ func NewConfig() *Config {
 	flag.StringVar(&config.Listen, "listen", defaultListen, "listening address")
 	flag.StringVar(&config.newAdminPassword, "admin_password", "", "change admin password")
 	flag.Parse()
+
+	dbUsernameEnv := os.Getenv("DB_USER")
+	if dbUsernameEnv != "" {
+		config.DbUsername = dbUsernameEnv
+	}
+
+	dbPasswordEnv := os.Getenv("DB_PASS")
+	if dbPasswordEnv != "" {
+		config.DbPassword = dbPasswordEnv
+	}
+
+	dbNameEnv := os.Getenv("DB_NAME")
+	if dbNameEnv != "" {
+		config.DbName = dbNameEnv
+	}
 
 	if !config.isBaseDirWritable() {
 		log.Fatalf("no write permissions in %s", config.BaseDir)

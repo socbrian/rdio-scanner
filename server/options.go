@@ -210,14 +210,22 @@ func (options *Options) Read(db *Database) error {
 	options.SortTalkgroups = defaults.options.sortTalkgroups
 	options.TagsToggle = defaults.options.tagsToggle
 
-	err = db.Sql.QueryRow("select `val` from `rdioScannerConfigs` where `key` = 'adminPassword'").Scan(&s)
+	q := "select `val` from `rdioScannerConfigs` where `key` = 'adminPassword'"
+	if db.Config.DbType == DbTypePostgresql {
+		q = "select val from rdioScannerConfigs where key = 'adminPassword'"
+	}
+	err = db.Sql.QueryRow(q).Scan(&s)
 	if err == nil {
 		if err = json.Unmarshal([]byte(s), &s); err == nil {
 			options.adminPassword = s
 		}
 	}
 
-	err = db.Sql.QueryRow("select `val` from `rdioScannerConfigs` where `key` = 'adminPasswordNeedChange'").Scan(&s)
+	q = "select `val` from `rdioScannerConfigs` where `key` = 'adminPasswordNeedChange'"
+	if db.Config.DbType == DbTypePostgresql {
+		q = "select val from rdioScannerConfigs where key = 'adminPasswordNeedChange'"
+	}
+	err = db.Sql.QueryRow(q).Scan(&s)
 	if err == nil {
 		var b bool
 		if err = json.Unmarshal([]byte(s), &b); err == nil {
@@ -225,7 +233,11 @@ func (options *Options) Read(db *Database) error {
 		}
 	}
 
-	err = db.Sql.QueryRow("select `val` from `rdioScannerConfigs` where `key` = 'options'").Scan(&s)
+	q = "select `val` from `rdioScannerConfigs` where `key` = 'options'"
+	if db.Config.DbType == DbTypePostgresql {
+		q = "select val from rdioScannerConfigs where key = 'options'"
+	}
+	err = db.Sql.QueryRow(q).Scan(&s)
 	if err == nil {
 		var m map[string]any
 
@@ -312,7 +324,11 @@ func (options *Options) Read(db *Database) error {
 		}
 	}
 
-	err = db.Sql.QueryRow("select `val` from `rdioScannerConfigs` where `key` = 'secret'").Scan(&s)
+	q = "select `val` from `rdioScannerConfigs` where `key` = 'secret'"
+	if db.Config.DbType == DbTypePostgresql {
+		q = "select val from rdioScannerConfigs where key = 'secret'"
+	}
+	err = db.Sql.QueryRow(q).Scan(&s)
 	if err == nil {
 		if err = json.Unmarshal([]byte(s), &s); err == nil {
 			options.secret = s
@@ -341,24 +357,40 @@ func (options *Options) Write(db *Database) error {
 		return formatError(err)
 	}
 
-	if res, err = db.Sql.Exec("update `rdioScannerConfigs` set `val` = ? where `key` = 'adminPassword'", string(b)); err != nil {
+	q := "update `rdioScannerConfigs` set `val` = ? where `key` = 'adminPassword'"
+	if db.Config.DbType == DbTypePostgresql {
+		q = "update rdioScannerConfigs set val = $1 where key = 'adminPassword'"
+	}
+	if res, err = db.Sql.Exec(q, string(b)); err != nil {
 		return formatError(err)
 	}
 
 	if i, err = res.RowsAffected(); err == nil && i == 0 {
-		db.Sql.Exec("insert into `rdioScannerConfigs` (`key`, `val`) values (?, ?)", "adminPassword", string(b))
+		q = "insert into `rdioScannerConfigs` (`key`, `val`) values (?, ?)"
+		if db.Config.DbType == DbTypePostgresql {
+			q = "insert into rdioScannerConfigs (key, val) values ($1, $2)"
+		}
+		db.Sql.Exec(q, "adminPassword", string(b))
 	}
 
 	if b, err = json.Marshal(options.adminPasswordNeedChange); err != nil {
 		return formatError(err)
 	}
 
-	if res, err = db.Sql.Exec("update `rdioScannerConfigs` set `val` = ? where `key` = 'adminPasswordNeedChange'", string(b)); err != nil {
+	q = "update `rdioScannerConfigs` set `val` = ? where `key` = 'adminPasswordNeedChange'"
+	if db.Config.DbType == DbTypePostgresql {
+		q = "update rdioScannerConfigs set val = $1 where key = 'adminPasswordNeedChange'"
+	}
+	if res, err = db.Sql.Exec(q, string(b)); err != nil {
 		return formatError(err)
 	}
 
 	if i, err = res.RowsAffected(); err == nil && i == 0 {
-		db.Sql.Exec("insert into `rdioScannerConfigs` (`key`, `val`) values (?, ?)", "adminPasswordNeedChange", string(b))
+		q = "insert into `rdioScannerConfigs` (`key`, `val`) values (?, ?)"
+		if db.Config.DbType == DbTypePostgresql {
+			q = "insert into rdioScannerConfigs (key, val) values ($1, $2)"
+		}
+		db.Sql.Exec(q, "adminPasswordNeedChange", string(b))
 	}
 
 	if b, err = json.Marshal(map[string]any{
@@ -382,12 +414,20 @@ func (options *Options) Write(db *Database) error {
 		return formatError(err)
 	}
 
-	if res, err = db.Sql.Exec("update `rdioScannerConfigs` set `val` = ? where `key` = 'options'", string(b)); err != nil {
+	q = "update `rdioScannerConfigs` set `val` = ? where `key` = 'options'"
+	if db.Config.DbType == DbTypePostgresql {
+		q = "update rdioScannerConfigs set val = $1 where key = 'options'"
+	}
+	if res, err = db.Sql.Exec(q, string(b)); err != nil {
 		return formatError(err)
 	}
 
 	if i, err = res.RowsAffected(); err == nil && i == 0 {
-		db.Sql.Exec("insert into `rdioScannerConfigs` (`key`, `val`) values (?, ?)", "options", string(b))
+		q := "insert into `rdioScannerConfigs` (`key`, `val`) values (?, ?)"
+		if db.Config.DbType == DbTypePostgresql {
+			q = "insert into rdioScannerConfigs (key, val) values ($1, $2)"
+		}
+		db.Sql.Exec(q, "options", string(b))
 	}
 
 	return nil

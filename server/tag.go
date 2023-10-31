@@ -178,7 +178,11 @@ func (tags *Tags) Read(db *Database) error {
 		return fmt.Errorf("tags read: %v", err)
 	}
 
-	if rows, err = db.Sql.Query("select `_id`, `label` from `rdioScannerTags`"); err != nil {
+	q := "select `_id`, `label` from `rdioScannerTags`"
+	if db.Config.DbType == DbTypePostgresql {
+		q = "select _id, label from rdioScannerTags"
+	}
+	if rows, err = db.Sql.Query(q); err != nil {
 		return formatError(err)
 	}
 
@@ -220,7 +224,11 @@ func (tags *Tags) Write(db *Database) error {
 		return fmt.Errorf("tags write %v", err)
 	}
 
-	if rows, err = db.Sql.Query("select `_id` from `rdioScannerTags`"); err != nil {
+	q := "select `_id` from `rdioScannerTags`"
+	if db.Config.DbType == DbTypePostgresql {
+		q = "select _id from rdioScannerTags"
+	}
+	if rows, err = db.Sql.Query(q); err != nil {
 		return formatError(err)
 	}
 
@@ -253,6 +261,9 @@ func (tags *Tags) Write(db *Database) error {
 			s = strings.ReplaceAll(s, "[", "(")
 			s = strings.ReplaceAll(s, "]", ")")
 			q := fmt.Sprintf("delete from `rdioScannerTags` where `_id` in %v", s)
+			if db.Config.DbType == DbTypePostgresql {
+				q = fmt.Sprintf("delete from rdioScannerTags where _id in %v", s)
+			}
 			if _, err = db.Sql.Exec(q); err != nil {
 				return formatError(err)
 			}
@@ -260,16 +271,30 @@ func (tags *Tags) Write(db *Database) error {
 	}
 
 	for _, tag := range tags.List {
-		if err = db.Sql.QueryRow("select count(*) from `rdioScannerTags` where `_id` = ?", tag.Id).Scan(&count); err != nil {
+		q = "select count(*) from `rdioScannerTags` where `_id` = ?"
+		if db.Config.DbType == DbTypePostgresql {
+			q = "select count(*) from rdioScannerTags where _id = $1"
+		}
+		if err = db.Sql.QueryRow(q, tag.Id).Scan(&count); err != nil {
 			break
 		}
 
 		if count == 0 {
-			if _, err = db.Sql.Exec("insert into `rdioScannerTags` (`_id`, `label`) values (?, ?)", tag.Id, tag.Label); err != nil {
+			q = "insert into `rdioScannerTags` (`_id`, `label`) values (?, ?)"
+			if db.Config.DbType == DbTypePostgresql {
+				q = "insert into rdioScannerTags (_id, label) values ($1, $2)"
+			}
+			if _, err = db.Sql.Exec(q, tag.Id, tag.Label); err != nil {
 				break
 			}
-		} else if _, err = db.Sql.Exec("update `rdioScannerTags` set `_id` = ?, `label` = ? where `_id` = ?", tag.Id, tag.Label, tag.Id); err != nil {
-			break
+		} else {
+			q = "update `rdioScannerTags` set `_id` = ?, `label` = ? where `_id` = ?"
+			if db.Config.DbType == DbTypePostgresql {
+				q = "update rdioScannerTags set _id = $1, label = $2 where _id = $3"
+			}
+			if _, err = db.Sql.Exec(q, tag.Id, tag.Label, tag.Id); err != nil {
+				break
+			}
 		}
 	}
 

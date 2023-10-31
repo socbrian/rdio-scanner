@@ -178,7 +178,11 @@ func (groups *Groups) Read(db *Database) error {
 		return fmt.Errorf("groups.read: %v", err)
 	}
 
-	if rows, err = db.Sql.Query("select `_id`, `label` from `rdioScannerGroups`"); err != nil {
+	q := "select `_id`, `label` from `rdioScannerGroups`"
+	if db.Config.DbType == DbTypePostgresql {
+		q = "select _id, label from rdioScannerGroups"
+	}
+	if rows, err = db.Sql.Query(q); err != nil {
 		return formatError(err)
 	}
 
@@ -224,7 +228,11 @@ func (groups *Groups) Write(db *Database) error {
 		return fmt.Errorf("groups.write %v", err)
 	}
 
-	if rows, err = db.Sql.Query("select `_id` from `rdioScannerGroups`"); err != nil {
+	q := "select `_id` from `rdioScannerGroups`"
+	if db.Config.DbType == DbTypePostgresql {
+		q = "select _id from rdioScannerGroups"
+	}
+	if rows, err = db.Sql.Query(q); err != nil {
 		return formatError(err)
 	}
 
@@ -257,6 +265,9 @@ func (groups *Groups) Write(db *Database) error {
 			s = strings.ReplaceAll(s, "[", "(")
 			s = strings.ReplaceAll(s, "]", ")")
 			q := fmt.Sprintf("delete from `rdioScannerGroups` where `_id` in %v", s)
+			if db.Config.DbType == DbTypePostgresql {
+				q = fmt.Sprintf("delete from rdioScannerGroups where _id in %v", s)
+			}
 			if _, err = db.Sql.Exec(q); err != nil {
 				return formatError(err)
 			}
@@ -264,17 +275,31 @@ func (groups *Groups) Write(db *Database) error {
 	}
 
 	for _, group := range groups.List {
-		if err = db.Sql.QueryRow("select count(*) from `rdioScannerGroups` where `_id` = ?", group.Id).Scan(&count); err != nil {
+		q := "select count(*) from `rdioScannerGroups` where `_id` = ?"
+		if db.Config.DbType == DbTypePostgresql {
+			q = "select count(*) from rdioScannerGroups where _id = $1"
+		}
+		if err = db.Sql.QueryRow(q, group.Id).Scan(&count); err != nil {
 			break
 		}
 
 		if count == 0 {
-			if _, err = db.Sql.Exec("insert into `rdioScannerGroups` (`_id`, `label`) values (?, ?)", group.Id, group.Label); err != nil {
+			q := "insert into `rdioScannerGroups` (`_id`, `label`) values (?, ?)"
+			if db.Config.DbType == DbTypePostgresql {
+				q = "insert into rdioScannerGroups (_id, label) values ($1, $2)"
+			}
+			if _, err = db.Sql.Exec(q, group.Id, group.Label); err != nil {
 				break
 			}
 
-		} else if _, err = db.Sql.Exec("update `rdioScannerGroups` set `_id` = ?, `label` = ? where `_id` = ?", group.Id, group.Label, group.Id); err != nil {
-			break
+		} else {
+			q := "update `rdioScannerGroups` set `_id` = ?, `label` = ? where `_id` = ?"
+			if db.Config.DbType == DbTypePostgresql {
+				q = "update rdioScannerGroups set _id = $1, label = $2 where _id = $3"
+			}
+			if _, err = db.Sql.Exec(q, group.Id, group.Label, group.Id); err != nil {
+				break
+			}
 		}
 	}
 

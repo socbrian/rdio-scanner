@@ -339,7 +339,11 @@ func (systems *Systems) Read(db *Database) error {
 		return fmt.Errorf("systems.read: %v", err)
 	}
 
-	if rows, err = db.Sql.Query("select `_id`, `autoPopulate`, `blacklists`, `id`, `label`, `led`, `order` from `rdioScannerSystems`"); err != nil {
+	q := "select `_id`, `autoPopulate`, `blacklists`, `id`, `label`, `led`, `order` from `rdioScannerSystems`"
+	if db.Config.DbType == DbTypePostgresql {
+		q = "select _id, autoPopulate, blacklists, id, label, led, \"order\" from rdioScannerSystems"
+	}
+	if rows, err = db.Sql.Query(q); err != nil {
 		return formatError(err)
 	}
 
@@ -412,7 +416,11 @@ func (systems *Systems) Write(db *Database) error {
 		return fmt.Errorf("systems.write: %v", err)
 	}
 
-	if rows, err = db.Sql.Query("select `_id`, `id` from `rdioScannerSystems`"); err != nil {
+	q := "select `_id`, `id` from `rdioScannerSystems`"
+	if db.Config.DbType == DbTypePostgresql {
+		q = "select _id, id from rdioScannerSystems"
+	}
+	if rows, err = db.Sql.Query(q); err != nil {
 		return formatError(err)
 	}
 
@@ -447,6 +455,9 @@ func (systems *Systems) Write(db *Database) error {
 			s = strings.ReplaceAll(s, "[", "(")
 			s = strings.ReplaceAll(s, "]", ")")
 			q := fmt.Sprintf("delete from `rdioScannerSystems` where `_id` in %v", s)
+			if db.Config.DbType == DbTypePostgresql {
+				q = fmt.Sprintf("delete from rdioScannerSystems where _id in %v", s)
+			}
 			if _, err = db.Sql.Exec(q); err != nil {
 				return formatError(err)
 			}
@@ -459,10 +470,16 @@ func (systems *Systems) Write(db *Database) error {
 			s = strings.ReplaceAll(s, "[", "(")
 			s = strings.ReplaceAll(s, "]", ")")
 			q := fmt.Sprintf("delete from `rdioScannerTalkgroups` where `systemId` in %v", s)
+			if db.Config.DbType == DbTypePostgresql {
+				q = fmt.Sprintf("delete from rdioScannerTalkgroups where systemId in %v", s)
+			}
 			if _, err = db.Sql.Exec(q); err != nil {
 				return formatError(err)
 			}
 			q = fmt.Sprintf("delete from `rdioScannerUnits` where `systemId` in %v", s)
+			if db.Config.DbType == DbTypePostgresql {
+				q = fmt.Sprintf("delete from rdioScannerUnits where systemId in %v", s)
+			}
 			if _, err = db.Sql.Exec(q); err != nil {
 				return formatError(err)
 			}
@@ -476,17 +493,31 @@ func (systems *Systems) Write(db *Database) error {
 			blacklists = "[]"
 		}
 
-		if err = db.Sql.QueryRow("select count(*) from `rdioScannerSystems` where `_id` = ?", system.RowId).Scan(&count); err != nil {
+		q = "select count(*) from `rdioScannerSystems` where `_id` = ?"
+		if db.Config.DbType == DbTypePostgresql {
+			q = "select count(*) from rdioScannerSystems where _id = $1"
+		}
+		if err = db.Sql.QueryRow(q, system.RowId).Scan(&count); err != nil {
 			break
 		}
 
 		if count == 0 {
-			if _, err = db.Sql.Exec("insert into `rdioScannerSystems` (`_id`, `autoPopulate`, `blacklists`, `id`, `label`, `led`, `order`) values (?, ?, ?, ?, ?, ?, ?)", system.RowId, system.AutoPopulate, blacklists, system.Id, system.Label, system.Led, system.Order); err != nil {
+			q = "insert into `rdioScannerSystems` (`_id`, `autoPopulate`, `blacklists`, `id`, `label`, `led`, `order`) values (?, ?, ?, ?, ?, ?, ?)"
+			if db.Config.DbType == DbTypePostgresql {
+				q = "insert into rdioScannerSystems (_id, autoPopulate, blacklists, id, label, led, \"order\") values ($1, $2, $3, $4, $5, $6, $7)"
+			}
+			if _, err = db.Sql.Exec(q, system.RowId, system.AutoPopulate, blacklists, system.Id, system.Label, system.Led, system.Order); err != nil {
 				break
 			}
 
-		} else if _, err = db.Sql.Exec("update `rdioScannerSystems` set `_id` = ?, `autoPopulate` = ?, `blacklists` = ?, `id` = ?, `label` = ?, `led` = ?, `order` = ? where `_id` = ?", system.RowId, system.AutoPopulate, blacklists, system.Id, system.Label, system.Led, system.Order, system.RowId); err != nil {
-			break
+		} else {
+			q = "update `rdioScannerSystems` set `_id` = ?, `autoPopulate` = ?, `blacklists` = ?, `id` = ?, `label` = ?, `led` = ?, `order` = ? where `_id` = ?"
+			if db.Config.DbType == DbTypePostgresql {
+				q = "update rdioScannerSystems set _id = $1, autoPopulate = $2, blacklists = $3, id = $4, label = $5, led = $6, \"order\" = $7 where _id = $8"
+			}
+			if _, err = db.Sql.Exec(q, system.RowId, system.AutoPopulate, blacklists, system.Id, system.Label, system.Led, system.Order, system.RowId); err != nil {
+				break
+			}
 		}
 
 		if err = system.Talkgroups.Write(db, system.Id); err != nil {

@@ -133,6 +133,9 @@ func (calls *Calls) CheckDuplicate(call *Call, msTimeFrame uint, db *Database) b
 	to := call.DateTime.Add(d)
 
 	query := fmt.Sprintf("select count(*) from `rdioScannerCalls` where (`dateTime` between '%v' and '%v') and `system` = %v and `talkgroup` = %v", from, to, call.System, call.Talkgroup)
+	if db.Config.DbType == DbTypePostgresql {
+		query = fmt.Sprintf("select count(*) from rdioScannerCalls where (dateTime between '%v' and '%v') and system = %v and talkgroup = %v", from, to, call.System, call.Talkgroup)
+	}
 	if err := db.Sql.QueryRow(query).Scan(&count); err != nil {
 		return false
 	}
@@ -159,6 +162,9 @@ func (calls *Calls) GetCall(id uint, db *Database) (*Call, error) {
 	call := Call{Id: id}
 
 	query := fmt.Sprintf("select `audio`, `audioName`, `audioType`, `DateTime`, `frequencies`, `frequency`, `patches`, `source`, `sources`, `system`, `talkgroup` from `rdioScannerCalls` where `id` = %v", id)
+	if db.Config.DbType == DbTypePostgresql {
+		query = fmt.Sprintf("select audio, audioName, audioType, DateTime, frequencies, frequency, patches, source, sources, system, talkgroup from rdioScannerCalls where id = %v", id)
+	}
 	err := db.Sql.QueryRow(query).Scan(&call.Audio, &audioName, &audioType, &dateTime, &frequencies, &frequency, &patches, &source, &sources, &call.System, &call.Talkgroup)
 	if err != nil && err != sql.ErrNoRows {
 		return nil, fmt.Errorf("getcall: %v, %v", err, query)
@@ -212,7 +218,11 @@ func (calls *Calls) Prune(db *Database, pruneDays uint) error {
 	defer calls.mutex.Unlock()
 
 	date := time.Now().Add(-24 * time.Hour * time.Duration(pruneDays)).Format(db.DateTimeFormat)
-	_, err := db.Sql.Exec("delete from `rdioScannerCalls` where `dateTime` < ?", date)
+	q := "delete from `rdioScannerCalls` where `dateTime` < ?"
+	if db.Config.DbType == DbTypePostgresql {
+		q = "delete from rdioScannerCalls where dateTime < $1"
+	}
+	_, err := db.Sql.Exec(q, date)
 
 	return err
 }
@@ -264,9 +274,15 @@ func (calls *Calls) Search(searchOptions *CallsSearchOptions, client *Client) (*
 						b = strings.ReplaceAll(b, "[", "(")
 						b = strings.ReplaceAll(b, "]", ")")
 						c = fmt.Sprintf("(`system` = %v and `talkgroup` in %v)", v["id"], b)
+						if db.Config.DbType == DbTypePostgresql {
+							c = fmt.Sprintf("(system = %v and talkgroup in %v)", v["id"], b)
+						}
 					case string:
 						if v["talkgroups"] == "*" {
 							c = fmt.Sprintf("`system` = %v", v["id"])
+							if db.Config.DbType == DbTypePostgresql {
+								c = fmt.Sprintf("system = %v", v["id"])
+							}
 						}
 					}
 				}
@@ -283,12 +299,26 @@ func (calls *Calls) Search(searchOptions *CallsSearchOptions, client *Client) (*
 		a := []string{
 			fmt.Sprintf("`system` = %v", v),
 		}
+		if db.Config.DbType == DbTypePostgresql {
+			a = []string{
+				fmt.Sprintf("system = %v", v),
+			}
+		}
 		switch v := searchOptions.Talkgroup.(type) {
 		case uint:
 			if searchOptions.searchPatchedTalkgroups {
-				a = append(a, fmt.Sprintf("`talkgroup` = %v or patches = '%v' or patches like '[%v,%%' or patches like '%%,%v,%%' or patches like '%%,%v]'", v, v, v, v, v))
+				if db.Config.DbType == DbTypePostgresql {
+					a = append(a, fmt.Sprintf("talkgroup = %v or patches = '%v' or patches like '[%v,%%' or patches like '%%,%v,%%' or patches like '%%,%v]'", v, v, v, v, v))
+				} else {
+					a = append(a, fmt.Sprintf("`talkgroup` = %v or patches = '%v' or patches like '[%v,%%' or patches like '%%,%v,%%' or patches like '%%,%v]'", v, v, v, v, v))
+				}
 			} else {
-				a = append(a, fmt.Sprintf("`talkgroup` = %v", v))
+				if db.Config.DbType == DbTypePostgresql {
+					a = append(a, fmt.Sprintf("talkgroup = %v", v))
+				} else {
+					a = append(a, fmt.Sprintf("`talkgroup` = %v", v))
+				}
+
 			}
 		}
 		where += fmt.Sprintf(" and (%s)", strings.Join(a, " and "))
@@ -301,7 +331,11 @@ func (calls *Calls) Search(searchOptions *CallsSearchOptions, client *Client) (*
 			b := strings.ReplaceAll(fmt.Sprintf("%v", m), " ", ", ")
 			b = strings.ReplaceAll(b, "[", "(")
 			b = strings.ReplaceAll(b, "]", ")")
-			a = append(a, fmt.Sprintf("(`system` = %v and `talkgroup` in %v)", id, b))
+			if db.Config.DbType == DbTypePostgresql {
+				a = append(a, fmt.Sprintf("(system = %v and talkgroup in %v)", id, b))
+			} else {
+				a = append(a, fmt.Sprintf("(`system` = %v and `talkgroup` in %v)", id, b))
+			}
 		}
 		if len(a) > 0 {
 			where += fmt.Sprintf(" and (%s)", strings.Join(a, " or "))
@@ -315,7 +349,11 @@ func (calls *Calls) Search(searchOptions *CallsSearchOptions, client *Client) (*
 			b := strings.ReplaceAll(fmt.Sprintf("%v", m), " ", ", ")
 			b = strings.ReplaceAll(b, "[", "(")
 			b = strings.ReplaceAll(b, "]", ")")
-			a = append(a, fmt.Sprintf("(`system` = %v and `talkgroup` in %v)", id, b))
+			if db.Config.DbType == DbTypePostgresql {
+				a = append(a, fmt.Sprintf("(system = %v and talkgroup in %v)", id, b))
+			} else {
+				a = append(a, fmt.Sprintf("(`system` = %v and `talkgroup` in %v)", id, b))
+			}
 		}
 		if len(a) > 0 {
 			where += fmt.Sprintf(" and (%s)", strings.Join(a, " or "))
@@ -323,6 +361,9 @@ func (calls *Calls) Search(searchOptions *CallsSearchOptions, client *Client) (*
 	}
 
 	query = fmt.Sprintf("select `dateTime` from `rdioScannerCalls` where %v order by `dateTime` asc", where)
+	if db.Config.DbType == DbTypePostgresql {
+		query = fmt.Sprintf("select dateTime from rdioScannerCalls where %v order by dateTime asc", where)
+	}
 	if err = db.Sql.QueryRow(query).Scan(&dateTime); err != nil && err != sql.ErrNoRows {
 		return nil, formatError(fmt.Errorf("%v, %v", err, query))
 	}
@@ -332,6 +373,9 @@ func (calls *Calls) Search(searchOptions *CallsSearchOptions, client *Client) (*
 	}
 
 	query = fmt.Sprintf("select `dateTime` from `rdioScannerCalls` where %v order by `dateTime` desc", where)
+	if db.Config.DbType == DbTypePostgresql {
+		query = fmt.Sprintf("select dateTime from rdioScannerCalls where %v order by dateTime desc", where)
+	}
 	if err = db.Sql.QueryRow(query).Scan(&dateTime); err != nil && err != sql.ErrNoRows {
 		return nil, formatError(fmt.Errorf("%v, %v", err, query))
 	}
@@ -370,7 +414,11 @@ func (calls *Calls) Search(searchOptions *CallsSearchOptions, client *Client) (*
 			stop = time.Date(v.Year(), v.Month(), v.Day(), v.Hour(), v.Minute(), 0, 0, time.UTC)
 		}
 
-		where += fmt.Sprintf(" and (`dateTime` between '%v' and '%v')", start.Format(df), stop.Format(df))
+		if db.Config.DbType == DbTypePostgresql {
+			where += fmt.Sprintf(" and (dateTime between '%v' and '%v')", start.Format(df), stop.Format(df))
+		} else {
+			where += fmt.Sprintf(" and (`dateTime` between '%v' and '%v')", start.Format(df), stop.Format(df))
+		}
 	}
 
 	switch v := searchOptions.Limit.(type) {
@@ -386,11 +434,17 @@ func (calls *Calls) Search(searchOptions *CallsSearchOptions, client *Client) (*
 	}
 
 	query = fmt.Sprintf("select count(*) from `rdioScannerCalls` where %v", where)
+	if db.Config.DbType == DbTypePostgresql {
+		query = fmt.Sprintf("select count(*) from rdioScannerCalls where %v", where)
+	}
 	if err = db.Sql.QueryRow(query).Scan(&searchResults.Count); err != nil && err != sql.ErrNoRows {
 		return nil, formatError(fmt.Errorf("%v, %v", err, query))
 	}
 
 	query = fmt.Sprintf("select `id`, `DateTime`, `system`, `talkgroup` from `rdioScannerCalls` where %v order by `dateTime` %v limit %v offset %v", where, order, limit, offset)
+	if db.Config.DbType == DbTypePostgresql {
+		query = fmt.Sprintf("select id, dateTime, system, talkgroup from rdioScannerCalls where %v order by dateTime %v limit %v offset %v", where, order, limit, offset)
+	}
 	if rows, err = db.Sql.Query(query); err != nil && err != sql.ErrNoRows {
 		return nil, formatError(fmt.Errorf("%v, %v", err, query))
 	}
@@ -469,7 +523,11 @@ func (calls *Calls) WriteCall(call *Call, db *Database) (uint, error) {
 		}
 	}
 
-	if res, err = db.Sql.Exec("insert into `rdioScannerCalls` (`id`, `audio`, `audioName`, `audioType`, `dateTime`, `frequencies`, `frequency`, `patches`, `source`, `sources`, `system`, `talkgroup`) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", call.Id, call.Audio, call.AudioName, call.AudioType, call.DateTime, frequencies, call.Frequency, patches, call.Source, sources, call.System, call.Talkgroup); err != nil {
+	q := "insert into `rdioScannerCalls` (`id`, `audio`, `audioName`, `audioType`, `dateTime`, `frequencies`, `frequency`, `patches`, `source`, `sources`, `system`, `talkgroup`) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+	if db.Config.DbType == DbTypePostgresql {
+		q = "insert into rdioScannerCalls (id, audio, audioName, audioType, dateTime, frequencies, frequency, patches, source, sources, system, talkgroup) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)"
+	}
+	if res, err = db.Sql.Exec(q, call.Id, call.Audio, call.AudioName, call.AudioType, call.DateTime, frequencies, call.Frequency, patches, call.Source, sources, call.System, call.Talkgroup); err != nil {
 		return 0, formatError(err)
 	}
 

@@ -799,7 +799,11 @@ func (dirwatches *Dirwatches) Read(db *Database) error {
 		return fmt.Errorf("dirwatches.read: %v", err)
 	}
 
-	if rows, err = db.Sql.Query("select `_id`, `delay`, `deleteAfter`, `directory`, `disabled`, `extension`, `frequency`, `mask`, `order`, `systemId`, `talkgroupId`, `type`, `usePolling` from `rdioScannerDirWatches`"); err != nil {
+	q := "select `_id`, `delay`, `deleteAfter`, `directory`, `disabled`, `extension`, `frequency`, `mask`, `order`, `systemId`, `talkgroupId`, `type`, `usePolling` from `rdioScannerDirWatches`"
+	if db.Config.DbType == DbTypePostgresql {
+		q = "select _id, delay, deleteAfter, directory, disabled, extension, frequency, mask, \"order\", systemId, talkgroupId, type, usePolling from rdioScannerDirWatches"
+	}
+	if rows, err = db.Sql.Query(q); err != nil {
 		return formatError(err)
 	}
 
@@ -888,7 +892,11 @@ func (dirwatches *Dirwatches) Write(db *Database) error {
 		return fmt.Errorf("dirwatches.write: %v", err)
 	}
 
-	if rows, err = db.Sql.Query("select `_id` from `rdioScannerDirWatches`"); err != nil {
+	q := "select `_id` from `rdioScannerDirWatches`"
+	if db.Config.DbType == DbTypePostgresql {
+		q = "select _id from rdioScannerDirWatches"
+	}
+	if rows, err = db.Sql.Query(q); err != nil {
 		return formatError(err)
 	}
 
@@ -921,6 +929,9 @@ func (dirwatches *Dirwatches) Write(db *Database) error {
 			s = strings.ReplaceAll(s, "[", "(")
 			s = strings.ReplaceAll(s, "]", ")")
 			q := fmt.Sprintf("delete from `rdioScannerDirwatches` where `_id` in %v", s)
+			if db.Config.DbType == DbTypePostgresql {
+				q = fmt.Sprintf("delete from rdioScannerDirwatches where _id in %v", s)
+			}
 			if _, err = db.Sql.Exec(q); err != nil {
 				return formatError(err)
 			}
@@ -928,17 +939,31 @@ func (dirwatches *Dirwatches) Write(db *Database) error {
 	}
 
 	for _, dirwatch := range dirwatches.List {
-		if err = db.Sql.QueryRow("select count(*) from `rdioScannerDirWatches` where `_id` = ?", dirwatch.Id).Scan(&count); err != nil {
+		q := "select count(*) from `rdioScannerDirWatches` where `_id` = ?"
+		if db.Config.DbType == DbTypePostgresql {
+			q = "select count(*) from rdioScannerDirWatches where _id = $1"
+		}
+		if err = db.Sql.QueryRow(q, dirwatch.Id).Scan(&count); err != nil {
 			break
 		}
 
 		if count == 0 {
-			if _, err = db.Sql.Exec("insert into `rdioScannerDirWatches` (`_id`, `delay`, `deleteAfter`, `directory`, `disabled`, `extension`, `frequency`, `mask`, `order`, `systemId`, `talkgroupId`, `type`, `usePolling`) values (?, ?, ?, ?, ?, ?, ?, ?, ? ,? ,? ,? ,?)", dirwatch.Id, dirwatch.Delay, dirwatch.DeleteAfter, dirwatch.Directory, dirwatch.Disabled, dirwatch.Extension, dirwatch.Frequency, dirwatch.Mask, dirwatch.Order, dirwatch.SystemId, dirwatch.TalkgroupId, dirwatch.Kind, dirwatch.UsePolling); err != nil {
+			q := "insert into `rdioScannerDirWatches` (`_id`, `delay`, `deleteAfter`, `directory`, `disabled`, `extension`, `frequency`, `mask`, `order`, `systemId`, `talkgroupId`, `type`, `usePolling`) values (?, ?, ?, ?, ?, ?, ?, ?, ? ,? ,? ,? ,?)"
+			if db.Config.DbType == DbTypePostgresql {
+				q = "insert into rdioScannerDirWatches (_id, delay, deleteAfter, directory, disabled, extension, frequency, mask, \"order\", systemId, talkgroupId, type, usePolling) values ($1, $2, $3, $4, $5, $6, $7, $8, $9 , $10, $11, $12, $13)"
+			}
+			if _, err = db.Sql.Exec(q, dirwatch.Id, dirwatch.Delay, dirwatch.DeleteAfter, dirwatch.Directory, dirwatch.Disabled, dirwatch.Extension, dirwatch.Frequency, dirwatch.Mask, dirwatch.Order, dirwatch.SystemId, dirwatch.TalkgroupId, dirwatch.Kind, dirwatch.UsePolling); err != nil {
 				break
 			}
 
-		} else if _, err = db.Sql.Exec("update `rdioScannerDirWatches` set `_id` = ?, `delay` = ?, `deleteAfter` = ?, `directory` = ?, `disabled` = ?, `extension` = ?, `frequency` = ?, `mask` = ?, `order` = ?, `systemId` = ?, `talkgroupId` = ?, `type` = ?, `usePolling` = ? where `_id` = ?", dirwatch.Id, dirwatch.Delay, dirwatch.DeleteAfter, dirwatch.Directory, dirwatch.Disabled, dirwatch.Extension, dirwatch.Frequency, dirwatch.Mask, dirwatch.Order, dirwatch.SystemId, dirwatch.TalkgroupId, dirwatch.Kind, dirwatch.UsePolling, dirwatch.Id); err != nil {
-			break
+		} else {
+			q := "update `rdioScannerDirWatches` set `_id` = ?, `delay` = ?, `deleteAfter` = ?, `directory` = ?, `disabled` = ?, `extension` = ?, `frequency` = ?, `mask` = ?, `order` = ?, `systemId` = ?, `talkgroupId` = ?, `type` = ?, `usePolling` = ? where `_id` = ?"
+			if db.Config.DbType == DbTypePostgresql {
+				q = "update rdioScannerDirWatches set _id = $1, delay = $2, deleteAfter = $3, directory = $4, disabled = $5, extension = $6, frequency = $7, mask = $8, \"order\" = $9, systemId = $10, talkgroupId = $11, type = $12, usePolling = $13 where _id = $14"
+			}
+			if _, err = db.Sql.Exec(q, dirwatch.Id, dirwatch.Delay, dirwatch.DeleteAfter, dirwatch.Directory, dirwatch.Disabled, dirwatch.Extension, dirwatch.Frequency, dirwatch.Mask, dirwatch.Order, dirwatch.SystemId, dirwatch.TalkgroupId, dirwatch.Kind, dirwatch.UsePolling, dirwatch.Id); err != nil {
+				break
+			}
 		}
 	}
 

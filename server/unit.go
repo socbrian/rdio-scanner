@@ -128,7 +128,11 @@ func (units *Units) Read(db *Database, systemId uint) error {
 		return fmt.Errorf("units.read: %v", err)
 	}
 
-	if rows, err = db.Sql.Query("select `id`, `label`, `order` from `rdioScannerUnits` where `systemId` = ?", systemId); err != nil {
+	q := "select `id`, `label`, `order` from `rdioScannerUnits` where `systemId` = ?"
+	if db.Config.DbType == DbTypePostgresql {
+		q = "select id, label, \"order\" from rdioScannerUnits where systemId = $1"
+	}
+	if rows, err = db.Sql.Query(q, systemId); err != nil {
 		return formatError(err)
 	}
 
@@ -170,7 +174,11 @@ func (units *Units) Write(db *Database, systemId uint) error {
 		return fmt.Errorf("units.write: %v", err)
 	}
 
-	if rows, err = db.Sql.Query("select `id` from `rdioScannerUnits` where `systemId` = ?", systemId); err != nil {
+	q := "select `id` from `rdioScannerUnits` where `systemId` = ?"
+	if db.Config.DbType == DbTypePostgresql {
+		q = "select id from rdioScannerUnits where systemId = $1"
+	}
+	if rows, err = db.Sql.Query(q, systemId); err != nil {
 		return formatError(err)
 	}
 
@@ -203,6 +211,9 @@ func (units *Units) Write(db *Database, systemId uint) error {
 			s = strings.ReplaceAll(s, "[", "(")
 			s = strings.ReplaceAll(s, "]", ")")
 			q := fmt.Sprintf("delete from `rdioScannerUnits` where `id` in %v and `systemId` = %v", s, systemId)
+			if db.Config.DbType == DbTypePostgresql {
+				q = fmt.Sprintf("delete from rdioScannerUnits where id in %v and systemId = %v", s, systemId)
+			}
 			if _, err = db.Sql.Exec(q); err != nil {
 				return formatError(err)
 			}
@@ -210,17 +221,31 @@ func (units *Units) Write(db *Database, systemId uint) error {
 	}
 
 	for _, unit := range units.List {
-		if err = db.Sql.QueryRow("select count(*) from `rdioScannerUnits` where `id` = ? and `systemId` = ?", unit.Id, systemId).Scan(&count); err != nil {
+		q = "select count(*) from `rdioScannerUnits` where `id` = ? and `systemId` = ?"
+		if db.Config.DbType == DbTypePostgresql {
+			q = "select count(*) from rdioScannerUnits where id = $1 and systemId = $2"
+		}
+		if err = db.Sql.QueryRow(q, unit.Id, systemId).Scan(&count); err != nil {
 			break
 		}
 
 		if count == 0 {
-			if _, err = db.Sql.Exec("insert into `rdioScannerUnits` (`id`, `label`, `order`, `systemId`) values (?, ?, ?, ?)", unit.Id, unit.Label, unit.Order, systemId); err != nil {
+			q = "insert into `rdioScannerUnits` (`id`, `label`, `order`, `systemId`) values (?, ?, ?, ?)"
+			if db.Config.DbType == DbTypePostgresql {
+				q = "insert into rdioScannerUnits (id, label, \"order\", systemId) values ($1, $2, $3, $4)"
+			}
+			if _, err = db.Sql.Exec(q, unit.Id, unit.Label, unit.Order, systemId); err != nil {
 				break
 			}
 
-		} else if _, err = db.Sql.Exec("update `rdioScannerUnits` set `label` = ?, `order` = ? where `id` = ? and `systemId` = ?", unit.Label, unit.Order, unit.Id, systemId); err != nil {
-			break
+		} else {
+			q = "update `rdioScannerUnits` set `label` = ?, `order` = ? where `id` = ? and `systemId` = ?"
+			if db.Config.DbType == DbTypePostgresql {
+				q = "update rdioScannerUnits set label = $1, order = $2 where id = $3 and systemId = $4"
+			}
+			if _, err = db.Sql.Exec(q, unit.Label, unit.Order, unit.Id, systemId); err != nil {
+				break
+			}
 		}
 	}
 
