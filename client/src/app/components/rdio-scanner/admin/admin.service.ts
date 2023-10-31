@@ -138,7 +138,8 @@ export interface Options {
     keypadBeeps?: string;
     maxClients?: number;
     playbackGoesLive?: boolean;
-    pruneDays?: number;
+    pruneCallDays?: number;
+    pruneLogDays?: number;
     searchPatchedTalkgroups?: boolean;
     showListenersCount?: boolean;
     sortTalkgroups?: boolean;
@@ -503,7 +504,8 @@ export class RdioScannerAdminService implements OnDestroy {
             keypadBeeps: [options?.keypadBeeps, Validators.required],
             maxClients: [options?.maxClients, [Validators.required, Validators.min(1)]],
             playbackGoesLive: [options?.playbackGoesLive],
-            pruneDays: [options?.pruneDays, [Validators.required, Validators.min(0)]],
+            pruneCallDays: [options?.pruneCallDays, [Validators.required, Validators.min(0)]],
+            pruneLogDays: [options?.pruneLogDays, [Validators.required, Validators.min(0)]],
 			searchPatchedTalkgroups: [options?.searchPatchedTalkgroups],
 			showListenersCount: [options?.showListenersCount],
             sortTalkgroups: [options?.sortTalkgroups],

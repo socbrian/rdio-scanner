@@ -37,18 +37,28 @@ func NewScheduler(controller *Controller) *Scheduler {
 	}
 }
 
-func (scheduler *Scheduler) pruneDatabase() error {
-	if scheduler.Controller.Options.PruneDays == 0 {
+func (scheduler *Scheduler) pruneCallDatabase() error {
+	if scheduler.Controller.Options.PruneCallDays == 0 {
 		return nil
 	}
 
-	scheduler.Controller.Logs.LogEvent(LogLevelInfo, "database pruning")
+	scheduler.Controller.Logs.LogEvent(LogLevelInfo, "database call pruning")
 
-	if err := scheduler.Controller.Calls.Prune(scheduler.Controller.Database, scheduler.Controller.Options.PruneDays); err != nil {
+	if err := scheduler.Controller.Calls.Prune(scheduler.Controller.Database, scheduler.Controller.Options.PruneCallDays); err != nil {
 		return err
 	}
 
-	if err := scheduler.Controller.Logs.Prune(scheduler.Controller.Database, scheduler.Controller.Options.PruneDays); err != nil {
+	return nil
+}
+
+func (scheduler *Scheduler) pruneLogDatabase() error {
+	if scheduler.Controller.Options.PruneLogDays == 0 {
+		return nil
+	}
+
+	scheduler.Controller.Logs.LogEvent(LogLevelInfo, "database logs pruning")
+
+	if err := scheduler.Controller.Logs.Prune(scheduler.Controller.Database, scheduler.Controller.Options.PruneLogDays); err != nil {
 		return err
 	}
 
@@ -63,7 +73,11 @@ func (scheduler *Scheduler) run() {
 		scheduler.Controller.Logs.LogEvent(LogLevelError, fmt.Sprintf("scheduler.run: %s", err.Error()))
 	}
 
-	if err := scheduler.pruneDatabase(); err != nil {
+	if err := scheduler.pruneCallDatabase(); err != nil {
+		logError(err)
+	}
+
+	if err := scheduler.pruneLogDatabase(); err != nil {
 		logError(err)
 	}
 }

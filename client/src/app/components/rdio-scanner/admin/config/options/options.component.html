@@ -135,17 +135,33 @@
     </div>
     <div class="row">
         <p>
-            <span class="mat-body">Prune Days</span><br>
-            <span class="mat-caption">Prune the database for data older than the specified number of days. Set to 0 to
+            <span class="mat-body">Prune Calls After</span><br>
+            <span class="mat-caption">Prune the database of calls older than the specified number of days. Set to 0 to
                 disable.</span>
         </p>
         <mat-form-field>
-            <input type="number" min="0" step="1" matInput formControlName="pruneDays">
-            <mat-error *ngIf="form?.get('pruneDays')?.hasError('required')">
-                Prune days is required
+            <input type="number" min="0" step="1" matInput formControlName="pruneCallDays">
+            <mat-error *ngIf="form?.get('pruneCallDays')?.hasError('required')">
+                Prune calls after is required
             </mat-error>
-            <mat-error *ngIf="form?.get('pruneDays')?.hasError('min')">
-                Prune days is invalid
+            <mat-error *ngIf="form?.get('pruneCallDays')?.hasError('min')">
+                Prune calls after is invalid
+            </mat-error>
+        </mat-form-field>
+    </div>
+    <div class="row">
+        <p>
+            <span class="mat-body">Prune Logs After</span><br>
+            <span class="mat-caption">Prune the database of logs older than the specified number of days. Set to 0 to
+                disable.</span>
+        </p>
+        <mat-form-field>
+            <input type="number" min="0" step="1" matInput formControlName="pruneLogDays">
+            <mat-error *ngIf="form?.get('pruneLogDays')?.hasError('required')">
+                Prune logs after is required
+            </mat-error>
+            <mat-error *ngIf="form?.get('pruneLogDays')?.hasError('min')">
+                Prune logs after is invalid
             </mat-error>
         </mat-form-field>
     </div>

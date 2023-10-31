@@ -35,7 +35,8 @@ type Options struct {
 	KeypadBeeps                 string `json:"keypadBeeps"`
 	MaxClients                  uint   `json:"maxClients"`
 	PlaybackGoesLive            bool   `json:"playbackGoesLive"`
-	PruneDays                   uint   `json:"pruneDays"`
+	PruneCallDays               uint   `json:"pruneCallDays"`
+	PruneLogDays                uint   `json:"pruneLogDays"`
 	SearchPatchedTalkgroups     bool   `json:"searchPatchedTalkgroups"`
 	ShowListenersCount          bool   `json:"showListenersCount"`
 	SortTalkgroups              bool   `json:"sortTalkgroups"`
@@ -137,11 +138,18 @@ func (options *Options) FromMap(m map[string]any) *Options {
 		options.PlaybackGoesLive = v
 	}
 
-	switch v := m["pruneDays"].(type) {
+	switch v := m["pruneCallDays"].(type) {
 	case float64:
-		options.PruneDays = uint(v)
+		options.PruneCallDays = uint(v)
 	default:
-		options.PruneDays = defaults.options.pruneDays
+		options.PruneCallDays = defaults.options.pruneCallDays
+	}
+
+	switch v := m["pruneLogDays"].(type) {
+	case float64:
+		options.PruneLogDays = uint(v)
+	default:
+		options.PruneLogDays = defaults.options.pruneLogDays
 	}
 
 	switch v := m["searchPatchedTalkgroups"].(type) {
@@ -204,7 +212,8 @@ func (options *Options) Read(db *Database) error {
 	options.KeypadBeeps = defaults.options.keypadBeeps
 	options.MaxClients = defaults.options.maxClients
 	options.PlaybackGoesLive = defaults.options.playbackGoesLive
-	options.PruneDays = defaults.options.pruneDays
+	options.PruneCallDays = defaults.options.pruneCallDays
+	options.PruneLogDays = defaults.options.pruneLogDays
 	options.SearchPatchedTalkgroups = defaults.options.searchPatchedTalkgroups
 	options.ShowListenersCount = defaults.options.showListenersCount
 	options.SortTalkgroups = defaults.options.sortTalkgroups
@@ -292,9 +301,14 @@ func (options *Options) Read(db *Database) error {
 				options.PlaybackGoesLive = v
 			}
 
-			switch v := m["pruneDays"].(type) {
+			switch v := m["pruneCallDays"].(type) {
 			case float64:
-				options.PruneDays = uint(v)
+				options.PruneCallDays = uint(v)
+			}
+
+			switch v := m["pruneLogDays"].(type) {
+			case float64:
+				options.PruneLogDays = uint(v)
 			}
 
 			switch v := m["searchPatchedTalkgroups"].(type) {
@@ -404,7 +418,8 @@ func (options *Options) Write(db *Database) error {
 		"keypadBeeps":                 options.KeypadBeeps,
 		"maxClients":                  options.MaxClients,
 		"playbackGoesLive":            options.PlaybackGoesLive,
-		"pruneDays":                   options.PruneDays,
+		"pruneLogDays":                options.PruneLogDays,
+		"pruneCallDays":               options.PruneCallDays,
 		"searchPatchedTalkgroups":     options.SearchPatchedTalkgroups,
 		"showListenersCount":          options.ShowListenersCount,
 		"sortTalkgroups":              options.SortTalkgroups,

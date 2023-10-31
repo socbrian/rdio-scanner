@@ -58,7 +58,8 @@ type DefaultOptions struct {
 	keypadBeeps                 string
 	maxClients                  uint
 	playbackGoesLive            bool
-	pruneDays                   uint
+	pruneCallDays               uint
+	pruneLogDays                uint
 	searchPatchedTalkgroups     bool
 	showListenersCount          bool
 	sortTalkgroups              bool
@@ -103,7 +104,8 @@ var defaults Defaults = Defaults{
 		keypadBeeps:                 "uniden",
 		maxClients:                  200,
 		playbackGoesLive:            false,
-		pruneDays:                   7,
+		pruneCallDays:               7,
+		pruneLogDays:                7,
 		searchPatchedTalkgroups:     false,
 		showListenersCount:          false,
 		sortTalkgroups:              false,
