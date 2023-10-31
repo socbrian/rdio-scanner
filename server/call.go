@@ -525,24 +525,32 @@ func (calls *Calls) WriteCall(call *Call, db *Database) (uint, error) {
 
 	if db.Config.DbType == DbTypePostgresql {
 		if call.Id != nil {
-			if res, err = db.Sql.Exec("insert into rdioScannerCalls (id, audio, audioName, audioType, dateTime, frequencies, frequency, patches, source, sources, system, talkgroup) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)", call.Id, call.Audio, call.AudioName, call.AudioType, call.DateTime, frequencies, call.Frequency, patches, call.Source, sources, call.System, call.Talkgroup); err != nil {
+			if _, err = db.Sql.Exec("insert into rdioScannerCalls (id, audio, audioName, audioType, dateTime, frequencies, frequency, patches, source, sources, system, talkgroup) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)", call.Id, call.Audio, call.AudioName, call.AudioType, call.DateTime, frequencies, call.Frequency, patches, call.Source, sources, call.System, call.Talkgroup); err != nil {
 				return 0, formatError(err)
 			}
+			callInt, ok := call.Id.(int)
+			if ok {
+				return uint(callInt), nil
+			}
+			return 0, formatError(err)
 		} else {
-			if res, err = db.Sql.Exec("insert into rdioScannerCalls (audio, audioName, audioType, dateTime, frequencies, frequency, patches, source, sources, system, talkgroup) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)", call.Audio, call.AudioName, call.AudioType, call.DateTime, frequencies, call.Frequency, patches, call.Source, sources, call.System, call.Talkgroup); err != nil {
+			var uid int
+			err = db.Sql.QueryRow("insert into rdioScannerCalls (audio, audioName, audioType, dateTime, frequencies, frequency, patches, source, sources, system, talkgroup) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id", call.Audio, call.AudioName, call.AudioType, call.DateTime, frequencies, call.Frequency, patches, call.Source, sources, call.System, call.Talkgroup).Scan(&uid)
+			if err != nil {
 				return 0, formatError(err)
 			}
+			return uint(uid), nil
 		}
 	} else {
 		if res, err = db.Sql.Exec("insert into `rdioScannerCalls` (`id`, `audio`, `audioName`, `audioType`, `dateTime`, `frequencies`, `frequency`, `patches`, `source`, `sources`, `system`, `talkgroup`) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", call.Id, call.Audio, call.AudioName, call.AudioType, call.DateTime, frequencies, call.Frequency, patches, call.Source, sources, call.System, call.Talkgroup); err != nil {
 			return 0, formatError(err)
 		}
-	}
 
-	if id, err = res.LastInsertId(); err == nil {
-		return uint(id), nil
-	} else {
-		return 0, formatError(err)
+		if id, err = res.LastInsertId(); err == nil {
+			return uint(id), nil
+		} else {
+			return 0, formatError(err)
+		}
 	}
 }
 
