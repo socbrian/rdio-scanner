@@ -523,12 +523,20 @@ func (calls *Calls) WriteCall(call *Call, db *Database) (uint, error) {
 		}
 	}
 
-	q := "insert into `rdioScannerCalls` (`id`, `audio`, `audioName`, `audioType`, `dateTime`, `frequencies`, `frequency`, `patches`, `source`, `sources`, `system`, `talkgroup`) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 	if db.Config.DbType == DbTypePostgresql {
-		q = "insert into rdioScannerCalls (id, audio, audioName, audioType, dateTime, frequencies, frequency, patches, source, sources, system, talkgroup) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)"
-	}
-	if res, err = db.Sql.Exec(q, call.Id, call.Audio, call.AudioName, call.AudioType, call.DateTime, frequencies, call.Frequency, patches, call.Source, sources, call.System, call.Talkgroup); err != nil {
-		return 0, formatError(err)
+		if call.Id != nil {
+			if res, err = db.Sql.Exec("insert into rdioScannerCalls (id, audio, audioName, audioType, dateTime, frequencies, frequency, patches, source, sources, system, talkgroup) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)", call.Id, call.Audio, call.AudioName, call.AudioType, call.DateTime, frequencies, call.Frequency, patches, call.Source, sources, call.System, call.Talkgroup); err != nil {
+				return 0, formatError(err)
+			}
+		} else {
+			if res, err = db.Sql.Exec("insert into rdioScannerCalls (audio, audioName, audioType, dateTime, frequencies, frequency, patches, source, sources, system, talkgroup) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)", call.Audio, call.AudioName, call.AudioType, call.DateTime, frequencies, call.Frequency, patches, call.Source, sources, call.System, call.Talkgroup); err != nil {
+				return 0, formatError(err)
+			}
+		}
+	} else {
+		if res, err = db.Sql.Exec("insert into `rdioScannerCalls` (`id`, `audio`, `audioName`, `audioType`, `dateTime`, `frequencies`, `frequency`, `patches`, `source`, `sources`, `system`, `talkgroup`) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", call.Id, call.Audio, call.AudioName, call.AudioType, call.DateTime, frequencies, call.Frequency, patches, call.Source, sources, call.System, call.Talkgroup); err != nil {
+			return 0, formatError(err)
+		}
 	}
 
 	if id, err = res.LastInsertId(); err == nil {
