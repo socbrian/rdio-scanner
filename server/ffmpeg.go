@@ -114,6 +114,25 @@ func (ffmpeg *FFMpeg) Convert(call *Call, systems *Systems, tags *Tags, mode uin
 	cmd.Stderr = stderr
 
 	if err = cmd.Run(); err == nil {
+		// Run the 8k conversion in the background and report the size difference
+		go func(origAudio []byte, thirtyTwoKAudio []byte) {
+			eightk_args := append(args, "-c:a", "aac", "-b:a", "8k", "-movflags", "frag_keyframe+empty_moov", "-f", "ipod", "-")
+			cmd := exec.Command("ffmpeg", eightk_args...)
+			cmd.Stdin = bytes.NewReader(origAudio)
+
+			eightk_stdout := bytes.NewBuffer([]byte(nil))
+			cmd.Stdout = eightk_stdout
+
+			eightk_stderr := bytes.NewBuffer([]byte(nil))
+			cmd.Stderr = eightk_stderr
+
+			if err := cmd.Run(); err == nil {
+				fmt.Printf("Audio conversion: %v bytes @ 32k -> %v bytes @ 8k\n", len(thirtyTwoKAudio), len(eightk_stdout.Bytes()))
+			} else {
+				fmt.Println(eightk_stderr.String())
+			}
+		}(call.Audio, stdout.Bytes())
+
 		call.Audio = stdout.Bytes()
 		call.AudioType = "audio/mp4"
 
