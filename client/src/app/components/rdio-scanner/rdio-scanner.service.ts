@@ -18,7 +18,7 @@
  */
 
 import { DOCUMENT } from '@angular/common';
-import { ApplicationRef, EventEmitter, Inject, Injectable, OnDestroy, inject } from '@angular/core';
+import { ApplicationRef, EventEmitter, Injectable, OnDestroy, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
 import { concat, interval, Subscription, timer } from 'rxjs';
@@ -40,6 +40,7 @@ import {
     RdioScannerSearchOptions,
 } from './rdio-scanner';
 import { RdioScannerSettingsService } from './settings/settings.service';
+import { Codec2Service } from './codec2.service';
 
 declare global {
     interface Window {
@@ -114,6 +115,7 @@ export class RdioScannerService implements OnDestroy {
     private websocket: WebSocket | undefined;
 
     private router = inject(Router)
+    private codec2Service = inject(Codec2Service)
 
     private document = inject(DOCUMENT);
 
@@ -518,34 +520,32 @@ export class RdioScannerService implements OnDestroy {
             arrayBufferView[i] = this.call.audio.data[i];
         }
 
-        this.audioContext?.decodeAudioData(arrayBuffer, (buffer) => {
-            if (!this.audioContext || this.audioSource || !this.call) {
-                return;
-            }
+        const audio: Uint16Array = this.codec2Service.decode(arrayBufferView);
 
-            this.audioSource = this.audioContext.createBufferSource();
-            this.audioSource.buffer = buffer;
-            this.audioSource.connect(this.audioContext.destination);
-            this.audioSource.onended = () => this.skip({ delay: true });
-            this.audioSource.start();
+        const myAudioBuffer = this.audioContext?.createBuffer(1, audio.length, 8000);
 
-            this.event.emit({ call: this.call, queue });
+        if (!this.audioContext || this.audioSource || !this.call || !myAudioBuffer) {
+            return;
+        }
 
-            interval(500).pipe(takeWhile(() => !!this.call)).subscribe(() => {
-                if (this.audioContext && !isNaN(this.audioContext.currentTime)) {
-                    if (isNaN(this.audioSourceStartTime)) {
-                        this.audioSourceStartTime = this.audioContext.currentTime;
-                    }
+        this.audioSource = this.audioContext.createBufferSource();
+        this.audioSource.buffer = myAudioBuffer as AudioBuffer;
+        this.audioSource.connect(this.audioContext.destination);
+        this.audioSource.onended = () => this.skip({ delay: true });
+        this.audioSource.start();
 
-                    if (!this.livefeedPaused) {
-                        this.event.emit({ time: this.audioContext.currentTime - this.audioSourceStartTime });
-                    }
+        this.event.emit({ call: this.call, queue });
+
+        interval(500).pipe(takeWhile(() => !!this.call)).subscribe(() => {
+            if (this.audioContext && !isNaN(this.audioContext.currentTime)) {
+                if (isNaN(this.audioSourceStartTime)) {
+                    this.audioSourceStartTime = this.audioContext.currentTime;
                 }
-            });
-        }, () => {
-            this.event.emit({ call: this.call, queue });
 
-            this.skip({ delay: false });
+                if (!this.livefeedPaused) {
+                    this.event.emit({ time: this.audioContext.currentTime - this.audioSourceStartTime });
+                }
+            }
         });
     }
 

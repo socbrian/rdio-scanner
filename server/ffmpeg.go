@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"os/exec"
 	"path"
+	"rdio-scanner/server/codec2"
 	"regexp"
 	"strconv"
 	"strings"
@@ -102,7 +103,7 @@ func (ffmpeg *FFMpeg) Convert(call *Call, systems *Systems, tags *Tags, mode uin
 		}
 	}
 
-	args = append(args, "-c:a", "aac", "-b:a", "32k", "-movflags", "frag_keyframe+empty_moov", "-f", "ipod", "-")
+	args = append(args, "-f", "s16le", "-ac", "1", "-ar", "8k", "-")
 
 	cmd := exec.Command("ffmpeg", args...)
 	cmd.Stdin = bytes.NewReader(call.Audio)
@@ -114,31 +115,38 @@ func (ffmpeg *FFMpeg) Convert(call *Call, systems *Systems, tags *Tags, mode uin
 	cmd.Stderr = stderr
 
 	if err = cmd.Run(); err == nil {
-		// Run the 8k conversion in the background and report the size difference
-		go func(origAudio []byte, thirtyTwoKAudio []byte) {
-			eightk_args := append(args, "-c:a", "aac", "-b:a", "8k", "-movflags", "frag_keyframe+empty_moov", "-f", "ipod", "-")
-			cmd := exec.Command("ffmpeg", eightk_args...)
-			cmd.Stdin = bytes.NewReader(origAudio)
+		codec := codec2.NewCodec2(codec2.Codec2Mode3200)
+		defer codec.Close()
+		nsam := codec.SamplesPerFrame()
+		sampleBuf := make([]int16, nsam)
 
-			eightk_stdout := bytes.NewBuffer([]byte(nil))
-			cmd.Stdout = eightk_stdout
+		codec.SetGray(true)
 
-			eightk_stderr := bytes.NewBuffer([]byte(nil))
-			cmd.Stderr = eightk_stderr
-
-			if err := cmd.Run(); err == nil {
-				fmt.Printf("Audio conversion: %v bytes @ 32k -> %v bytes @ 8k\n", len(thirtyTwoKAudio), len(eightk_stdout.Bytes()))
-			} else {
-				fmt.Println(eightk_stderr.String())
+		encoded := make([]byte, 0)
+		for i := 0; i < len(stdout.Bytes()); i += 2 * nsam {
+			for j := 0; j < nsam; j++ {
+				sampleBuf[j] = int16(stdout.Bytes()[i+2*j]) | int16(stdout.Bytes()[i+2*j+1])<<8
 			}
-		}(call.Audio, stdout.Bytes())
+			enc, err := codec.Encode(sampleBuf)
+			if err != nil {
+				return err
+			}
+			encoded = append(encoded, enc...)
+		}
 
-		call.Audio = stdout.Bytes()
-		call.AudioType = "audio/mp4"
+		go func() {
+			_, err := codec.Decode(encoded)
+			if err != nil {
+				return
+			}
+		}()
+
+		call.Audio = encoded
+		call.AudioType = "audio/codec2"
 
 		switch v := call.AudioName.(type) {
 		case string:
-			call.AudioName = fmt.Sprintf("%v.m4a", strings.TrimSuffix(v, path.Ext((v))))
+			call.AudioName = fmt.Sprintf("%v.c2", strings.TrimSuffix(v, path.Ext((v))))
 		}
 
 	} else {
