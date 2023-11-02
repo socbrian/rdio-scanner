@@ -115,37 +115,7 @@ func (ffmpeg *FFMpeg) Convert(call *Call, systems *Systems, tags *Tags, mode uin
 	cmd.Stderr = stderr
 
 	if err = cmd.Run(); err == nil {
-		codec := codec2.NewCodec2(codec2.Codec2Mode3200)
-		defer codec.Close()
-		codec.SetGray(true)
-
-		nsam := codec.SamplesPerFrame()
-		nbits := codec.BitsPerFrame() / 8
-
-		numFrames := int(math.Ceil(float64(len(stdout.Bytes())) / 2 / float64(nsam)))
-
-		encoded := make([]byte, numFrames*nbits)
-		for i := 0; i < numFrames; i += 1 {
-			voice := make([]int16, nsam)
-			for j := 0; j < nsam; j += 1 {
-				index := i*nsam + j
-				if index < len(stdout.Bytes())/2 {
-					voice[j] = int16(stdout.Bytes()[index*2]) | int16(stdout.Bytes()[index*2+1])<<8
-				}
-			}
-			bits, err := codec.Encode(voice)
-			if err != nil {
-				return err
-			}
-			for j := 0; j < nbits; j += 1 {
-				index := i*nbits + j
-				if index < len(encoded) {
-					encoded[index] = bits[j]
-				}
-			}
-		}
-
-		call.Audio = encoded
+		call.Audio = stdout.Bytes()
 		call.AudioType = "application/ogg"
 
 		switch v := call.AudioName.(type) {
