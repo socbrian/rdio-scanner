@@ -22,7 +22,6 @@ import { NgModule } from '@angular/core';
 import { AppSharedModule } from '../../shared/shared.module';
 import { RdioScannerComponent } from './rdio-scanner.component';
 import { RdioScannerService } from './rdio-scanner.service';
-import { Codec2Service } from './codec2.service';
 import { RdioScannerMainComponent } from './main/main.component';
 import { RdioScannerSearchComponent } from './search/search.component';
 import { RdioScannerSelectComponent } from './select/select.component';
@@ -44,7 +43,6 @@ import { WindowRef } from './windowRef';
     providers: [
         RdioScannerService,
         WindowRef,
-        Codec2Service,
         { provide: OverlayContainer, useClass: FullscreenOverlayContainer },
     ],
 })

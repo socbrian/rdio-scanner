@@ -40,7 +40,6 @@ import {
     RdioScannerSearchOptions,
 } from './rdio-scanner';
 import { RdioScannerSettingsService } from './settings/settings.service';
-import { Codec2Service } from './codec2.service';
 
 declare global {
     interface Window {
@@ -115,7 +114,6 @@ export class RdioScannerService implements OnDestroy {
     private websocket: WebSocket | undefined;
 
     private router = inject(Router)
-    private codec2Service = inject(Codec2Service)
 
     private document = inject(DOCUMENT);
 
@@ -520,37 +518,34 @@ export class RdioScannerService implements OnDestroy {
             arrayBufferView[i] = this.call.audio.data[i];
         }
 
-        const audio: Int16Array = this.codec2Service.decode(arrayBufferView);
-
-        const myAudioBuffer = this.audioContext?.createBuffer(1, audio.length, 8000);
-        const nowBuffering = myAudioBuffer?.getChannelData(0) as Float32Array;
-        for (let i = 0; i < nowBuffering.length; i++) {
-            nowBuffering[i] = audio[i] / 32768.0;
-        }
-
-        if (!this.audioContext || this.audioSource || !this.call || !myAudioBuffer) {
-            console.warn('Failed to create audio buffer');
-            return;
-        }
-
-        this.audioSource = this.audioContext.createBufferSource();
-        this.audioSource.buffer = myAudioBuffer as AudioBuffer;
-        this.audioSource.connect(this.audioContext.destination);
-        this.audioSource.onended = () => this.skip({ delay: true });
-        this.audioSource.start();
-
-        this.event.emit({ call: this.call, queue });
-
-        interval(500).pipe(takeWhile(() => !!this.call)).subscribe(() => {
-            if (this.audioContext && !isNaN(this.audioContext.currentTime)) {
-                if (isNaN(this.audioSourceStartTime)) {
-                    this.audioSourceStartTime = this.audioContext.currentTime;
-                }
-
-                if (!this.livefeedPaused) {
-                    this.event.emit({ time: this.audioContext.currentTime - this.audioSourceStartTime });
-                }
+        this.audioContext?.decodeAudioData(arrayBuffer, (buffer) => {
+            if (!this.audioContext || this.audioSource || !this.call) {
+                return;
             }
+
+            this.audioSource = this.audioContext.createBufferSource();
+            this.audioSource.buffer = buffer;
+            this.audioSource.connect(this.audioContext.destination);
+            this.audioSource.onended = () => this.skip({ delay: true });
+            this.audioSource.start();
+
+            this.event.emit({ call: this.call, queue });
+
+            interval(500).pipe(takeWhile(() => !!this.call)).subscribe(() => {
+                if (this.audioContext && !isNaN(this.audioContext.currentTime)) {
+                    if (isNaN(this.audioSourceStartTime)) {
+                        this.audioSourceStartTime = this.audioContext.currentTime;
+                    }
+
+                    if (!this.livefeedPaused) {
+                        this.event.emit({ time: this.audioContext.currentTime - this.audioSourceStartTime });
+                    }
+                }
+            });
+        }, () => {
+            this.event.emit({ call: this.call, queue });
+
+            this.skip({ delay: false });
         });
     }
 

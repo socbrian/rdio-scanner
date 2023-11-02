@@ -19,7 +19,6 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"math"
 	"os/exec"
 	"path"
 	"regexp"

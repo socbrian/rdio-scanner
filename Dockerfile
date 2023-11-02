@@ -1,4 +1,4 @@
-FROM node:21.1.0-alpine as frontend
+FROM node:21.1.0 as frontend
 
 WORKDIR /app
 
@@ -8,49 +8,16 @@ RUN npm ci
 
 COPY client/. ./
 
-RUN apk --no-cache --no-progress add build-base cmake git clang16 llvm16 lld wasi-libcxx wasi-libc wasi-compiler-rt && \
-    git clone https://github.com/USA-RedDragon/codec2 -b wasm --depth 1 && \
-    cd codec2 && \
-    mkdir build_linux && \
-    cd build_linux && \
-    cmake .. && \
-    make && \
-    cd .. && \
-    mkdir build_wasm && \
-    cd build_wasm && \
-    cmake .. -DCMAKE_TOOLCHAIN_FILE=wasm32.cmake -DUNITTEST=FALSE -DGENERATE_CODEBOOK=`pwd`/../build_linux/src/generate_codebook && \
-    make && \
-    cp src/libcodec2.so /app/src/libcodec2.so && \
-    cd ../.. && \
-    rm -rf codec2 && \
-    apk del build-base cmake git clang16 llvm16 lld wasi-libcxx wasi-libc wasi-compiler-rt
-
 RUN npm run build
 
-FROM golang:1.21.3-alpine as binary
+FROM golang:1.21.3 as binary
 
 WORKDIR /app
-
-RUN apk --no-cache --no-progress add build-base cmake git && \
-    git clone https://github.com/drowe67/codec2 -b 1.2.0 --depth 1 && \
-    cd codec2 && \
-    mkdir build && \
-    cd build && \
-    cmake .. -D BUILD_SHARED_LIBS=OFF && \
-    make && \
-    make install && \
-    cd ../.. && \
-    rm -rf codec2 && \
-    mv /usr/local/lib/libcodec2* /usr/lib/ && \
-    mv /usr/local/include/codec2 /usr/include/ && \
-    apk del build-base cmake git
 
 COPY server/. server/.
 COPY --from=frontend /app/dist/ server/webapp/
 
-RUN apk --no-cache --no-progress add build-base && \
-    cd server && CGO_ENABLED=1 go build -o /rdio-scanner && \
-    apk del build-base
+RUN cd server && CGO_ENABLED=0 go build -o /rdio-scanner
 
 FROM alpine:3.18.4
 
