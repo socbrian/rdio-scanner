@@ -102,7 +102,7 @@ func (ffmpeg *FFMpeg) Convert(call *Call, systems *Systems, tags *Tags, mode uin
 		}
 	}
 
-	args = append(args, "-c:a", "libopus", "-b:a", "8k", "-f", "opus", "-")
+	args = append(args, "-c:a", "libopus", "-b:a", "16k", "-f", "opus", "-")
 
 	cmd := exec.Command("ffmpeg", args...)
 	cmd.Stdin = bytes.NewReader(call.Audio)
