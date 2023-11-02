@@ -125,6 +125,9 @@ func (ffmpeg *FFMpeg) Convert(call *Call, systems *Systems, tags *Tags, mode uin
 		encoded := make([]byte, 0)
 		for i := 0; i < len(stdout.Bytes()); i += 2 * nsam {
 			for j := 0; j < nsam; j++ {
+				if i+2*j+1 >= len(stdout.Bytes()) {
+					break
+				}
 				sampleBuf[j] = int16(stdout.Bytes()[i+2*j]) | int16(stdout.Bytes()[i+2*j+1])<<8
 			}
 			enc, err := codec.Encode(sampleBuf)
