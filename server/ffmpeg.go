@@ -22,7 +22,6 @@ import (
 	"math"
 	"os/exec"
 	"path"
-	"rdio-scanner/server/codec2"
 	"regexp"
 	"strconv"
 	"strings"
@@ -82,6 +81,20 @@ func (ffmpeg *FFMpeg) Convert(call *Call, systems *Systems, tags *Tags, mode uin
 		return nil
 	}
 
+	if system, ok := systems.GetSystem(call.System); ok {
+		if talkgroup, ok := system.Talkgroups.GetTalkgroup(call.Talkgroup); ok {
+			if tag, ok := tags.GetTag(talkgroup.TagId); ok {
+				args = append(args,
+					"-metadata", fmt.Sprintf("album=%v", talkgroup.Label),
+					"-metadata", fmt.Sprintf("artist=%v", system.Label),
+					"-metadata", fmt.Sprintf("date=%v", call.DateTime),
+					"-metadata", fmt.Sprintf("genre=%v", tag),
+					"-metadata", fmt.Sprintf("title=%v", talkgroup.Name),
+				)
+			}
+		}
+	}
+
 	if ffmpeg.version43 {
 		if mode == AUDIO_CONVERSION_ENABLED_NORM {
 			args = append(args, "-af", "apad=whole_dur=3s,loudnorm")
@@ -90,7 +103,7 @@ func (ffmpeg *FFMpeg) Convert(call *Call, systems *Systems, tags *Tags, mode uin
 		}
 	}
 
-	args = append(args, "-f", "s16le", "-ac", "1", "-ar", "8k", "-")
+	args = append(args, "-c:a", "libopus", "-b:a", "6k", "-")
 
 	cmd := exec.Command("ffmpeg", args...)
 	cmd.Stdin = bytes.NewReader(call.Audio)
@@ -133,11 +146,11 @@ func (ffmpeg *FFMpeg) Convert(call *Call, systems *Systems, tags *Tags, mode uin
 		}
 
 		call.Audio = encoded
-		call.AudioType = "audio/codec2"
+		call.AudioType = "application/ogg"
 
 		switch v := call.AudioName.(type) {
 		case string:
-			call.AudioName = fmt.Sprintf("%v.c2", strings.TrimSuffix(v, path.Ext((v))))
+			call.AudioName = fmt.Sprintf("%v.opus", strings.TrimSuffix(v, path.Ext((v))))
 		}
 
 	} else {
