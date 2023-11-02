@@ -72,7 +72,7 @@ func (vs *Codec2) Encode(samples []int16) ([]byte, error) {
 	}
 	var (
 		s    = samples
-		bits = make([]byte, vs.bitsPerFrame)
+		bits = make([]byte, vs.bitsPerFrame/8)
 	)
 	C.codec2_encode(vs.codec2, (*C.uchar)(unsafe.Pointer(&bits[0])), (*C.short)(unsafe.Pointer(&s[0])))
 	return bits, nil

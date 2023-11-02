@@ -19,6 +19,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"math"
 	"os/exec"
 	"path"
 	"rdio-scanner/server/codec2"
@@ -81,20 +82,6 @@ func (ffmpeg *FFMpeg) Convert(call *Call, systems *Systems, tags *Tags, mode uin
 		return nil
 	}
 
-	if system, ok := systems.GetSystem(call.System); ok {
-		if talkgroup, ok := system.Talkgroups.GetTalkgroup(call.Talkgroup); ok {
-			if tag, ok := tags.GetTag(talkgroup.TagId); ok {
-				args = append(args,
-					"-metadata", fmt.Sprintf("album=%v", talkgroup.Label),
-					"-metadata", fmt.Sprintf("artist=%v", system.Label),
-					"-metadata", fmt.Sprintf("date=%v", call.DateTime),
-					"-metadata", fmt.Sprintf("genre=%v", tag),
-					"-metadata", fmt.Sprintf("title=%v", talkgroup.Name),
-				)
-			}
-		}
-	}
-
 	if ffmpeg.version43 {
 		if mode == AUDIO_CONVERSION_ENABLED_NORM {
 			args = append(args, "-af", "apad=whole_dur=3s,loudnorm")
@@ -117,32 +104,33 @@ func (ffmpeg *FFMpeg) Convert(call *Call, systems *Systems, tags *Tags, mode uin
 	if err = cmd.Run(); err == nil {
 		codec := codec2.NewCodec2(codec2.Codec2Mode3200)
 		defer codec.Close()
-		nsam := codec.SamplesPerFrame()
-		sampleBuf := make([]int16, nsam)
-
 		codec.SetGray(true)
 
-		encoded := make([]byte, 0)
-		for i := 0; i < len(stdout.Bytes()); i += 2 * nsam {
-			for j := 0; j < nsam; j++ {
-				if i+2*j+1 >= len(stdout.Bytes()) {
-					break
+		nsam := codec.SamplesPerFrame()
+		nbits := codec.BitsPerFrame() / 8
+
+		numFrames := int(math.Ceil(float64(len(stdout.Bytes())) / 2 / float64(nsam)))
+
+		encoded := make([]byte, numFrames*nbits)
+		for i := 0; i < numFrames; i += 1 {
+			voice := make([]int16, nsam)
+			for j := 0; j < nsam; j += 1 {
+				index := i*nsam + j
+				if index < len(stdout.Bytes())/2 {
+					voice[j] = int16(stdout.Bytes()[index*2]) | int16(stdout.Bytes()[index*2+1])<<8
 				}
-				sampleBuf[j] = int16(stdout.Bytes()[i+2*j]) | int16(stdout.Bytes()[i+2*j+1])<<8
 			}
-			enc, err := codec.Encode(sampleBuf)
+			bits, err := codec.Encode(voice)
 			if err != nil {
 				return err
 			}
-			encoded = append(encoded, enc...)
-		}
-
-		go func() {
-			_, err := codec.Decode(encoded)
-			if err != nil {
-				return
+			for j := 0; j < nbits; j += 1 {
+				index := i*nbits + j
+				if index < len(encoded) {
+					encoded[index] = bits[j]
+				}
 			}
-		}()
+		}
 
 		call.Audio = encoded
 		call.AudioType = "audio/codec2"

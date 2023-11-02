@@ -520,11 +520,16 @@ export class RdioScannerService implements OnDestroy {
             arrayBufferView[i] = this.call.audio.data[i];
         }
 
-        const audio: Uint16Array = this.codec2Service.decode(arrayBufferView);
+        const audio: Int16Array = this.codec2Service.decode(arrayBufferView);
 
         const myAudioBuffer = this.audioContext?.createBuffer(1, audio.length, 8000);
+        const nowBuffering = myAudioBuffer?.getChannelData(0) as Float32Array;
+        for (let i = 0; i < nowBuffering.length; i++) {
+            nowBuffering[i] = audio[i] / 32768.0;
+        }
 
         if (!this.audioContext || this.audioSource || !this.call || !myAudioBuffer) {
+            console.warn('Failed to create audio buffer');
             return;
         }
 
