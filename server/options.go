@@ -27,6 +27,7 @@ import (
 type Options struct {
 	AfsSystems                  string `json:"afsSystems"`
 	AudioConversion             uint   `json:"audioConversion"`
+	AudioBitrate                uint   `json:"audioBitrate"`
 	AutoPopulate                bool   `json:"autoPopulate"`
 	Branding                    string `json:"branding"`
 	DimmerDelay                 uint   `json:"dimmerDelay"`
@@ -75,6 +76,21 @@ func (options *Options) FromMap(m map[string]any) *Options {
 		options.AudioConversion = uint(v)
 	default:
 		options.MaxClients = defaults.options.audioConversion
+	}
+
+	switch v := m["audioBitrate"].(type) {
+	case uint:
+		options.AudioBitrate = v
+	case float64:
+		options.AudioBitrate = uint(v)
+	default:
+		options.AudioBitrate = defaults.options.audioBitrate
+	}
+	if options.AudioBitrate > 128 {
+		options.AudioBitrate = 128
+	}
+	if options.AudioBitrate < 6 {
+		options.AudioBitrate = 6
 	}
 
 	switch v := m["autoPopulate"].(type) {
@@ -205,6 +221,7 @@ func (options *Options) Read(db *Database) error {
 	options.adminPassword = string(defaultPassword)
 	options.adminPasswordNeedChange = defaults.adminPasswordNeedChange
 	options.AudioConversion = defaults.options.audioConversion
+	options.AudioBitrate = defaults.options.audioBitrate
 	options.AutoPopulate = defaults.options.autoPopulate
 	options.DimmerDelay = defaults.options.dimmerDelay
 	options.DisableDuplicateDetection = defaults.options.disableDuplicateDetection
@@ -259,6 +276,13 @@ func (options *Options) Read(db *Database) error {
 			switch v := m["audioConversion"].(type) {
 			case float64:
 				options.AudioConversion = uint(v)
+			}
+
+			switch v := m["audioBitrate"].(type) {
+			case uint:
+				options.AudioBitrate = v
+			case float64:
+				options.AudioBitrate = uint(v)
 			}
 
 			switch v := m["autoPopulate"].(type) {
@@ -410,6 +434,7 @@ func (options *Options) Write(db *Database) error {
 	if b, err = json.Marshal(map[string]any{
 		"afsSystems":                  options.AfsSystems,
 		"audioConversion":             options.AudioConversion,
+		"audioBitrate":                options.AudioBitrate,
 		"autoPopulate":                options.AutoPopulate,
 		"branding":                    options.Branding,
 		"dimmerDelay":                 options.DimmerDelay,

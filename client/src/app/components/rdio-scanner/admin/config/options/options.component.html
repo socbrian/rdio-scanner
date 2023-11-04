@@ -24,7 +24,7 @@
     <div class="row">
         <p>
             <span class="mat-body">Audio Conversion</span><br>
-            <span class="mat-caption">Convert incoming audio files to 6kbps OPUS with ffmpeg.</span>
+            <span class="mat-caption">Convert incoming audio files to OPUS with ffmpeg.</span>
         </p>
         <mat-form-field floatLabel="never">
             <mat-select formControlName="audioConversion" placeholder="Audio Conversion">
@@ -33,6 +33,24 @@
                 <mat-option [value]="2">Enabled with normalization</mat-option>
                 <mat-option [value]="3">Enabled with loud normalization</mat-option>
             </mat-select>
+        </mat-form-field>
+    </div>
+    <div class="row">
+        <p>
+            <span class="mat-body">Audio Conversion Bitrate</span><br>
+            <span class="mat-caption">Convert incoming audio files to a specific bitrate between 6-128kbps.</span>
+        </p>
+        <mat-form-field>
+            <input type="number" min="6" max="128" step="1" matInput formControlName="audioBitrate">
+            <mat-error *ngIf="form?.get('audioBitrate')?.hasError('required')">
+                Audio bitrate is required
+            </mat-error>
+            <mat-error *ngIf="form?.get('audioBitrate')?.hasError('min')">
+                Audio bitrate must be at least 6kbps
+            </mat-error>
+            <mat-error *ngIf="form?.get('audioBitrate')?.hasError('max')">
+                Audio bitrate must be at most 128kbps
+            </mat-error>
         </mat-form-field>
     </div>
     <div class="row">

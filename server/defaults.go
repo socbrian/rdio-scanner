@@ -52,6 +52,7 @@ type DefaultDownstream struct {
 type DefaultOptions struct {
 	autoPopulate                bool
 	audioConversion             uint
+	audioBitrate                uint
 	dimmerDelay                 uint
 	disableDuplicateDetection   bool
 	duplicateDetectionTimeFrame uint
@@ -97,6 +98,7 @@ var defaults Defaults = Defaults{
 	keypadBeeps: "uniden",
 	options: DefaultOptions{
 		audioConversion:             AUDIO_CONVERSION_ENABLED,
+		audioBitrate:                24,
 		autoPopulate:                true,
 		dimmerDelay:                 5000,
 		disableDuplicateDetection:   false,

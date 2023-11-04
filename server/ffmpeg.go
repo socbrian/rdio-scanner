@@ -61,7 +61,7 @@ func NewFFMpeg() *FFMpeg {
 	return ffmpeg
 }
 
-func (ffmpeg *FFMpeg) Convert(call *Call, systems *Systems, tags *Tags, mode uint) error {
+func (ffmpeg *FFMpeg) Convert(call *Call, systems *Systems, tags *Tags, mode uint, bitrateKhz uint) error {
 	var (
 		args = []string{"-i", "-"}
 		err  error
@@ -102,7 +102,9 @@ func (ffmpeg *FFMpeg) Convert(call *Call, systems *Systems, tags *Tags, mode uin
 		}
 	}
 
-	args = append(args, "-c:a", "libopus", "-vbr", "on", "-compression_level", "10", "-b:a", "24k", "-f", "opus", "-")
+	bitrateStr := fmt.Sprintf("%dk", bitrateKhz)
+
+	args = append(args, "-c:a", "libopus", "-vbr", "on", "-compression_level", "10", "-b:a", bitrateStr, "-f", "opus", "-")
 
 	cmd := exec.Command("ffmpeg", args...)
 	cmd.Stdin = bytes.NewReader(call.Audio)
