@@ -516,7 +516,11 @@ func (db *Database) migration20220101070000(verbose bool) error {
 			"create unique index `rdio_scanner_units_system_id_id` on `rdioScannerUnits` (`systemId`, `id`)",
 		}
 	}
-	if rows, err = db.Sql.Query("select `id`, `talkgroups`, `units` from `rdioScannerSystems`"); err == nil {
+	q := "select `id`, `talkgroups`, `units` from `rdioScannerSystems`"
+	if db.Config.DbType == DbTypePostgresql {
+		q = "select id, talkgroups, units from rdioScannerSystems"
+	}
+	if rows, err = db.Sql.Query(q); err == nil {
 		for rows.Next() {
 			if err = rows.Scan(&id, &stra, &strb); err != nil {
 				break
