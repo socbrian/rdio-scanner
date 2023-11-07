@@ -35,6 +35,15 @@ const (
 	DbTypePostgresql string = "postgresql"
 )
 
+type sslMode string
+
+const (
+	SSLModeDisable    sslMode = "disable"
+	SSLModeRequire    sslMode = "require"
+	SSLModeVerifyCA   sslMode = "verify-ca"
+	SSLModeVerifyFull sslMode = "verify-full"
+)
+
 type Config struct {
 	BaseDir          string
 	ConfigFile       string
@@ -43,6 +52,7 @@ type Config struct {
 	DbHost           string
 	DbPort           uint
 	DbName           string
+	DBSSLMode        sslMode
 	DbUsername       string
 	DbPassword       string
 	MetricsPort      uint
@@ -108,6 +118,7 @@ func NewConfig() *Config {
 	flag.StringVar(&config.DbFile, "db_file", defaultDbFile, "sqlite database file")
 	flag.StringVar(&config.DbHost, "db_host", defaultDbHost, "database host ip or hostname")
 	flag.StringVar(&config.DbName, "db_name", "", "database name")
+	flag.StringVar((*string)(&config.DBSSLMode), "db_sslmode", string(SSLModeDisable), fmt.Sprintf("database ssl mode, one of %s, %s, %s, or %s", SSLModeDisable, SSLModeRequire, SSLModeVerifyCA, SSLModeVerifyFull))
 	flag.StringVar(&config.DbPassword, "db_pass", "", "database password")
 	flag.UintVar(&config.DbPort, "db_port", defaultDbPort, "database host port")
 	flag.StringVar(&config.DbType, "db_type", defaultDbType, fmt.Sprintf("database type, one of %s, %s, %s, or %s", DbTypeSqlite, DbTypeMariadb, DbTypeMysql, DbTypePostgresql))
@@ -131,6 +142,11 @@ func NewConfig() *Config {
 	dbNameEnv := os.Getenv("DB_NAME")
 	if dbNameEnv != "" {
 		config.DbName = dbNameEnv
+	}
+
+	dbSSLModeEnv := os.Getenv("DB_SSLMODE")
+	if dbSSLModeEnv != "" {
+		config.DBSSLMode = sslMode(dbSSLModeEnv)
 	}
 
 	metricsPortEnvStr := os.Getenv("METRICS_PORT")
@@ -173,6 +189,10 @@ func NewConfig() *Config {
 
 			if v := cfg.Section("").Key("db_name").String(); len(v) > 0 {
 				config.DbName = v
+			}
+
+			if v := cfg.Section("").Key("db_sslmode").String(); len(v) > 0 {
+				config.DBSSLMode = sslMode(v)
 			}
 
 			if v := cfg.Section("").Key("db_pass").String(); len(v) > 0 {
@@ -252,6 +272,10 @@ func (config *Config) saveConfig() error {
 
 		if config.DbName != "" {
 			ini = append(ini, fmt.Sprintf("db_name = %s", config.DbName))
+		}
+
+		if config.DBSSLMode != "" {
+			ini = append(ini, fmt.Sprintf("db_sslmode = %s", config.DBSSLMode))
 		}
 
 		if config.DbPassword != "" {

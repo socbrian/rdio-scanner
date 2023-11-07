@@ -62,7 +62,7 @@ func NewDatabase(config *Config) *Database {
 		database.DateTimeFormat = "2006-01-02 15:04:05.000000+00"
 
 		dsn := fmt.Sprintf("host=%s port=%d user=%s "+
-			"password=%s dbname=%s sslmode=disable", config.DbHost, config.DbPort, config.DbUsername, config.DbPassword, config.DbName)
+			"password=%s dbname=%s sslmode=%s", config.DbHost, config.DbPort, config.DbUsername, config.DbPassword, config.DbName, config.DBSSLMode)
 
 		if database.Sql, err = sql.Open("postgres", dsn); err != nil {
 			log.Fatal(err)
