@@ -28,7 +28,7 @@
                     <span class="mat-body">Key</span><br>
                     <span class="mat-caption">Api key.</span>
                 </p>
-                <mat-form-field floatLabel="never">
+                <mat-form-field>
                     <input #key type="text" matInput formControlName="key" placeholder="Key">
                     <button type="button" mat-icon-button matSuffix (click)="copy(key)">
                         <mat-icon>content_copy</mat-icon>
@@ -47,7 +47,7 @@
                     <span class="mat-caption">Dummy identifier which serves only to identify this API key is for
                         whom.</span>
                 </p>
-                <mat-form-field floatLabel="never">
+                <mat-form-field>
                     <input type="text" matInput formControlName="ident" placeholder="Ident">
                     <mat-error *ngIf="apiKey.get('ident')?.hasError('required')">
                         Ident is required

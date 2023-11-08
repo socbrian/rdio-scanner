@@ -46,7 +46,7 @@
                         </ul>
                     </span>
                 </p>
-                <mat-form-field floatLabel="never">
+                <mat-form-field>
                     <mat-select formControlName="type" placeholder="Type">
                         <mat-option value="default">Default</mat-option>
                         <mat-option value="dsdplus">DSDPlus Fast Lane</mat-option>
@@ -77,7 +77,7 @@
                         directory to monitor for file ingestion.  Note that dirwatch is not compatible with networked disk.
                     </span>
                 </p>
-                <mat-form-field floatLabel="never">
+                <mat-form-field>
                     <input type="text" matInput formControlName="directory" placeholder="Directory">
                     <mat-error *ngIf="dirWatch.get('directory')?.hasError('required')">
                         Directory is required
@@ -96,7 +96,7 @@
                     <span class="mat-caption">The audio call extension to monitor without the period. Ex.: "mp3",
                         "wav".</span>
                 </p>
-                <mat-form-field floatLabel="never">
+                <mat-form-field>
                     <input type="text" matInput formControlName="extension" placeholder="Extension">
                     <mat-error *ngIf="dirWatch.get('extension')?.hasError('invalid')">
                         Invalid extension
@@ -108,7 +108,7 @@
                     <span class="mat-body">System</span><br>
                     <span class="mat-caption">System to where the audio files should go.</span>
                 </p>
-                <mat-form-field floatLabel="never">
+                <mat-form-field>
                     <mat-select #sysId formControlName="systemId" placeholder="System">
                         <mat-option [value]="null"></mat-option>
                         <mat-option *ngFor="let system of systems" [value]="system.value.id">
@@ -125,7 +125,7 @@
                     <span class="mat-body">Talkgroup</span><br>
                     <span class="mat-caption">Talkgroup to where the audio files should go.</span>
                 </p>
-                <mat-form-field floatLabel="never">
+                <mat-form-field>
                     <mat-select formControlName="talkgroupId" placeholder="Talkgroup">
                         <mat-option [value]="null"></mat-option>
                         <mat-option *ngFor="let talkgroup of talkgroups[dirWatch.value.systemId] || []"
@@ -173,7 +173,7 @@
                         Example: cymx_#TG_#DATE_#TIME_#HZ
                     </span>
                 </p>
-                <mat-form-field floatLabel="never">
+                <mat-form-field>
                     <input type="text" matInput formControlName="mask" placeholder="Mask">
                     <mat-error *ngIf="dirWatch.get('mask')?.hasError('invalid')">
                         Invalid mask
@@ -185,7 +185,7 @@
                     <span class="mat-body">Frequency</span><br>
                     <span class="mat-caption">Fake frequency in hertz displayed on the main screen.</span>
                 </p>
-                <mat-form-field floatLabel="never">
+                <mat-form-field>
                     <input type="number" matInput formControlName="frequency" placeholder="Frequency">
                     <mat-error *ngIf="dirWatch.get('frequency')?.errors">
                         Invalid frequency
@@ -199,7 +199,7 @@
                         recorder has created the file. You can set a delay value in milliseconds for the audio file to
                         settle before ingesting it.</span>
                 </p>
-                <mat-form-field floatLabel="never">
+                <mat-form-field>
                     <input type="number" matInput formControlName="delay" min="2000" placeholder="Delay">
                     <mat-error *ngIf="dirWatch.get('delay')?.hasError('min')">
                         Delay value cannot be less than 2000 milliseconds.

@@ -14,7 +14,7 @@
 <section>
     <p class="mat-body">step 2: select system</p>
     <p class="text-center">
-        <mat-form-field floatLabel="never">
+        <mat-form-field>
             <mat-select [(ngModel)]="system">
                 <mat-option *ngFor="let system of baseConfig.systems" [value]="system">
                     {{ system.label}}

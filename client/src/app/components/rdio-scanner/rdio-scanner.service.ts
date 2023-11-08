@@ -20,7 +20,7 @@
 import { DOCUMENT } from '@angular/common';
 import { ApplicationRef, EventEmitter, Injectable, OnDestroy, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { concat, interval, Subscription, timer } from 'rxjs';
 import { takeWhile, first } from 'rxjs/operators';
 import { SwUpdate, VersionEvent } from '@angular/service-worker';

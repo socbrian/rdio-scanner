@@ -19,7 +19,7 @@
 
 import { ChangeDetectorRef, Component, OnDestroy, ViewChild, inject } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
+import { MatPaginator } from '@angular/material/paginator';
 import { BehaviorSubject } from 'rxjs';
 import {
     RdioScannerCall,

@@ -27,7 +27,7 @@
                     <span class="mat-body">API Key</span><br>
                     <span class="mat-caption">Api key of the remote instance.</span>
                 </p>
-                <mat-form-field floatLabel="never">
+                <mat-form-field>
                     <input #key type="text" matInput formControlName="apiKey" placeholder="API key">
                     <mat-error *ngIf="downstream.get('apiKey')?.hasError('duplicate')">
                         API key is already defined
@@ -42,7 +42,7 @@
                     <span class="mat-body">URL</span><br>
                     <span class="mat-caption">URL of the remote instance.</span>
                 </p>
-                <mat-form-field floatLabel="never">
+                <mat-form-field>
                     <input type="text" matInput formControlName="url" placeholder="URL">
                     <mat-error *ngIf="downstream.get('url')?.hasError('required')">
                         URL is required

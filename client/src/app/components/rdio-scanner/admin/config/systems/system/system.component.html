@@ -4,7 +4,7 @@
             <span class="mat-body">Id</span><br>
             <span class="mat-caption">System identifier in decimal format.</span>
         </p>
-        <mat-form-field floatLabel="never">
+        <mat-form-field>
             <input type="number" min="1" step="1" matInput formControlName="id" placeholder="Id">
             <mat-error *ngIf="form.get('id')?.hasError('duplicate')">
                 Id is already defined
@@ -22,7 +22,7 @@
             <span class="mat-body">Label</span><br>
             <span class="mat-caption">System label displayed on the main screen and on the search panel.</span>
         </p>
-        <mat-form-field floatLabel="never">
+        <mat-form-field>
             <input type="text" matInput formControlName="label" placeholder="Label">
             <mat-error *ngIf="form.get('label')?.hasError('required')">
                 Label is required
@@ -35,7 +35,7 @@
             <span class="mat-caption">Indicator color when playing an audio file from this system. If not
                 specified, the indicator will light green.</span>
         </p>
-        <mat-form-field floatLabel="never">
+        <mat-form-field>
             <mat-select formControlName="led" placeholder="Color">
                 <mat-option [value]="null">Default</mat-option>
                 <mat-option *ngFor="let led of leds" [value]="led">
@@ -57,7 +57,7 @@
             <span class="mat-caption">A comma separated list of talkgroup Ids to blacklist from this system. This only
                 has an effect if the auto populate option is enabled.</span>
         </p>
-        <mat-form-field floatLabel="never">
+        <mat-form-field>
             <textarea type="text" matInput formControlName="blacklists" placeholder="Blacklists"></textarea>
             <mat-error *ngIf="form?.get('blacklists')?.hasError('invalid')">
                 Comma separated list of talkgroup Ids

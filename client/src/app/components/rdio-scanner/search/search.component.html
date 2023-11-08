@@ -76,83 +76,85 @@
     </div>
 </mat-card>
 <mat-card class="rdio-filters">
-    <form autocomplete="off" [formGroup]="form">
-        <mat-form-field>
-            <mat-label>
-                Sort order
-            </mat-label>
-            <mat-select formControlName="sort" (selectionChange)="formChangeHandler()">
-                <mat-option [value]="1">
-                    Ascending
-                </mat-option>
-                <mat-option [value]="-1">
-                    Descending
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-        <mat-form-field>
-            <mat-label>
-                Date
-            </mat-label>
-            <input matInput type="datetime-local" formControlName="date" [max]="playbackList?.dateStop"
-                [min]="playbackList?.dateStart" placeholder="Choose a date" (change)="formChangeHandler()">
-        </mat-form-field>
-        <mat-form-field>
-            <mat-label>
-                System
-            </mat-label>
-            <mat-select formControlName="system" (selectionChange)="formChangeHandler()">
-                <mat-option [value]="-1">
-                    All Systems
-                </mat-option>
-                <mat-option *ngFor="let system of optionsSystem; index as i" [value]="i">
-                    {{ system }}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-        <mat-form-field>
-            <mat-label>
-                Talkgroup
-            </mat-label>
-            <mat-select formControlName="talkgroup" (selectionChange)="formChangeHandler()">
-                <mat-option [value]="-1">
-                    All Talkgroups
-                </mat-option>
-                <mat-option *ngFor="let talkgroup of optionsTalkgroup; index as i" [value]="i">
-                    {{ talkgroup }}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-        <mat-form-field>
-            <mat-label>
-                Group
-            </mat-label>
-            <mat-select formControlName="group" (selectionChange)="formChangeHandler()">
-                <mat-option [value]="-1">
-                    All Groups
-                </mat-option>
-                <mat-option *ngFor="let group of optionsGroup; index as i" [value]="i">
-                    {{ group }}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-        <mat-form-field>
-            <mat-label>
-                Tag
-            </mat-label>
-            <mat-select formControlName="tag" (selectionChange)="formChangeHandler()">
-                <mat-option [value]="-1">
-                    All Tags
-                </mat-option>
-                <mat-option *ngFor="let tag of optionsTag; index as i" [value]="i">
-                    {{ tag }}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-        <div class="reset">
-            <button mat-raised-button type="button" [disabled]="resultsPending" (click)="resetForm()">
-                Reset
-            </button>
-        </div>
-    </form>
+    <mat-card-content>
+        <form autocomplete="off" [formGroup]="form">
+            <mat-form-field>
+                <mat-label>
+                    Sort order
+                </mat-label>
+                <mat-select formControlName="sort" (selectionChange)="formChangeHandler()">
+                    <mat-option [value]="1">
+                        Ascending
+                    </mat-option>
+                    <mat-option [value]="-1">
+                        Descending
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>
+                    Date
+                </mat-label>
+                <input matInput type="datetime-local" formControlName="date" [max]="playbackList?.dateStop"
+                    [min]="playbackList?.dateStart" placeholder="Choose a date" (change)="formChangeHandler()">
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>
+                    System
+                </mat-label>
+                <mat-select formControlName="system" (selectionChange)="formChangeHandler()">
+                    <mat-option [value]="-1">
+                        All Systems
+                    </mat-option>
+                    <mat-option *ngFor="let system of optionsSystem; index as i" [value]="i">
+                        {{ system }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>
+                    Talkgroup
+                </mat-label>
+                <mat-select formControlName="talkgroup" (selectionChange)="formChangeHandler()">
+                    <mat-option [value]="-1">
+                        All Talkgroups
+                    </mat-option>
+                    <mat-option *ngFor="let talkgroup of optionsTalkgroup; index as i" [value]="i">
+                        {{ talkgroup }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>
+                    Group
+                </mat-label>
+                <mat-select formControlName="group" (selectionChange)="formChangeHandler()">
+                    <mat-option [value]="-1">
+                        All Groups
+                    </mat-option>
+                    <mat-option *ngFor="let group of optionsGroup; index as i" [value]="i">
+                        {{ group }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>
+                    Tag
+                </mat-label>
+                <mat-select formControlName="tag" (selectionChange)="formChangeHandler()">
+                    <mat-option [value]="-1">
+                        All Tags
+                    </mat-option>
+                    <mat-option *ngFor="let tag of optionsTag; index as i" [value]="i">
+                        {{ tag }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <div class="reset">
+                <button mat-raised-button type="button" [disabled]="resultsPending" (click)="resetForm()">
+                    Reset
+                </button>
+            </div>
+        </form>
+    </mat-card-content>
 </mat-card>

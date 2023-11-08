@@ -19,7 +19,7 @@
 
 import { DOCUMENT } from '@angular/common';
 import { Component, EventEmitter, Output, inject } from '@angular/core';
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Config, RdioScannerAdminService } from '../../admin.service';
 
 @Component({

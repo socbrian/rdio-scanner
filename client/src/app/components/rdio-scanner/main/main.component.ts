@@ -19,8 +19,8 @@
 
 import { ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild, inject } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { MatLegacyInput as MatInput } from '@angular/material/legacy-input';
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
+import { MatInput } from '@angular/material/input';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription, timer } from 'rxjs';
 import packageInfo from '../../../../../package.json';
 import {

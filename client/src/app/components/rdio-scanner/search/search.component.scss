@@ -10,7 +10,7 @@
   flex-direction: row;
   flex-wrap: wrap;
 
-  .mat-form-field {
+  .mat-mdc-form-field {
     @for $i from 1 through 6 {
       &:nth-of-type(#{$i}) {
         order: #{$i};
@@ -33,8 +33,10 @@
   overflow: hidden;
   padding: 0;
 
-  .mat-cell,
-  .mat-header-cell {
+  .mat-mdc-cell,
+  .mat-mdc-header-cell {
+    padding: 0;
+
     &:first-of-type {
       padding-left: 0;
     }
@@ -44,7 +46,7 @@
     }
 
     &:nth-child(1) {
-      flex: 0 0 40px;
+      flex: 0 0 48px;
     }
 
     &:nth-child(2) {
@@ -61,6 +63,7 @@
 
     &:nth-child(4),
     &:nth-child(5) {
+      padding-right: 4px;
       flex: 0 0 20%;
     }
 
@@ -98,13 +101,13 @@
 }
 
 @media (max-width: 459px) {
-  .rdio-filters form .mat-form-field {
+  .rdio-filters form .mat-mdc-form-field {
     flex: 100%;
   }
 }
 
 @media (min-width: 460px) and (max-width: 979px) {
-  .rdio-filters form .mat-form-field {
+  .rdio-filters form .mat-mdc-form-field {
     flex: calc(50% - 1em);
 
     &:nth-of-type(2),
@@ -116,7 +119,7 @@
 }
 
 @media (min-width: 980px) {
-  .rdio-filters form .mat-form-field {
+  .rdio-filters form .mat-mdc-form-field {
     flex: calc(100% / 3 - 2em);
 
     &:nth-of-type(2),

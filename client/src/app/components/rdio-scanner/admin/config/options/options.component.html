@@ -14,7 +14,7 @@
             <span class="mat-caption">A comma separated list of system Ids where talkgroup Ids should be displayed in
                 AFS (agency-fleet-subfleet) format.</span>
         </p>
-        <mat-form-field floatLabel="never">
+        <mat-form-field>
             <textarea type="text" matInput formControlName="afsSystems" placeholder="AFS systems"></textarea>
             <mat-error *ngIf="form?.get('afsSystems')?.hasError('invalid')">
                 Comma separated list of system Ids
@@ -26,7 +26,7 @@
             <span class="mat-body">Audio Conversion</span><br>
             <span class="mat-caption">Convert incoming audio files to OPUS with ffmpeg.</span>
         </p>
-        <mat-form-field floatLabel="never">
+        <mat-form-field>
             <mat-select formControlName="audioConversion" placeholder="Audio Conversion">
                 <mat-option [value]="0">Disabled</mat-option>
                 <mat-option [value]="1">Enabled without normalization</mat-option>
@@ -69,7 +69,7 @@
             <span class="mat-caption">A simple line of text displayed above the main screen to help identify the Rdio
                 Scanner instance.</span>
         </p>
-        <mat-form-field floatLabel="never">
+        <mat-form-field>
             <input type="text" matInput formControlName="branding" placeholder="Branding">
         </mat-form-field>
     </div>
@@ -119,7 +119,7 @@
             <span class="mat-body">Keypad Beep Style</span><br>
             <span class="mat-caption">Provide audio feedback when pressing buttons.</span>
         </p>
-        <mat-form-field floatLabel="never">
+        <mat-form-field>
             <mat-select formControlName="keypadBeeps" placeholder="Style">
                 <mat-option value="uniden">Uniden</mat-option>
                 <mat-option value="whistler">Whistler</mat-option>
