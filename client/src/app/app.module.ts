@@ -26,6 +26,7 @@ import { AppComponent } from './app.component';
 import { RdioScannerModule } from './components/rdio-scanner/rdio-scanner.module';
 import { AppSharedModule } from './shared/shared.module';
 import { routes } from './app.routes';
+import { AppUpdateService } from './update.service';
 
 @NgModule({
     bootstrap: [AppComponent],
@@ -42,6 +43,9 @@ import { routes } from './app.routes';
             enabled: environment.production,
             registrationStrategy: 'registerWhenStable:30000',
         }),
+    ],
+    providers: [
+        AppUpdateService,
     ],
 })
 export class AppModule { }

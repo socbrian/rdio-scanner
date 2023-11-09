@@ -17,11 +17,18 @@
  * ****************************************************************************
  */
 
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { AppUpdateService } from './update.service';
 
 @Component({
     selector: 'app-root',
     styleUrls: ['./app.component.scss'],
     templateUrl: './app.component.html',
 })
-export class AppComponent { }
+export class AppComponent {
+    private appUpdateService = inject(AppUpdateService)
+
+    constructor() {
+        this.appUpdateService.checkForUpdates();
+    }
+}
