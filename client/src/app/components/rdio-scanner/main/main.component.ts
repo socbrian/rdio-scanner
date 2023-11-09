@@ -94,6 +94,8 @@ export class RdioScannerMainComponent implements OnDestroy, OnInit {
     holdTg = false;
 
     ledStyle = '';
+    ledColor = '';
+    ledBoxShadow = '';
 
     linked = false;
 
@@ -614,15 +616,20 @@ export class RdioScannerMainComponent implements OnDestroy, OnInit {
             }
         }
 
-        const colors = ['blue', 'cyan', 'green', 'magenta', 'orange', 'red', 'white', 'yellow'];
-
         this.ledStyle = this.call && this.livefeedPaused ? 'on paused' : this.call ? 'on' : 'off';
 
-        if (colors.includes(this.call?.talkgroupData?.led as string)) {
-            this.ledStyle = `${this.ledStyle} ${this.call?.talkgroupData?.led}`;
-
-        } else if (colors.includes(this.call?.systemData?.led as string)) {
-            this.ledStyle = `${this.ledStyle} ${this.call?.systemData?.led}`;
+        if (this.call?.talkgroupData?.led) {
+            this.ledStyle = `${this.ledStyle}`;
+            this.ledColor = this.call?.talkgroupData?.led;
+            this.ledBoxShadow = `0 0 6px 3px ${this.call?.talkgroupData?.led}`;
+        } else if (this.call?.systemData?.led) {
+            this.ledStyle = `${this.ledStyle}`;
+            this.ledColor = this.call?.systemData?.led;
+            this.ledBoxShadow = `0 0 6px 3px ${this.call?.systemData?.led}`;
+        } else {
+            this.ledStyle = `${this.ledStyle}`;
+            this.ledColor = 'rgb(0, 230, 118)';
+            this.ledBoxShadow = '0 0 6px 3px rgb(0, 230, 118)';
         }
 
         this.ngChangeDetectorRef.detectChanges();

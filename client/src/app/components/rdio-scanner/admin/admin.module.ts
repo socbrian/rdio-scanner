@@ -19,6 +19,9 @@
 
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
+
+import { NgxColorsModule } from 'ngx-colors';
+
 import { AppSharedModule } from '../../../shared/shared.module';
 import { RdioScannerAdminComponent } from './admin.component';
 import { RdioScannerAdminService } from './admin.service';
@@ -43,7 +46,6 @@ import { RdioScannerAdminImportExportConfigComponent } from './tools/import-expo
 import { RdioScannerAdminImportTalkgroupsComponent } from './tools/import-talkgroups/import-talkgroups.component';
 import { RdioScannerAdminImportUnitsComponent } from './tools/import-units/import-units.component';
 import { RdioScannerAdminPasswordComponent } from './tools/password/password.component';
-
 @NgModule({
     declarations: [
         RdioScannerAdminComponent,
@@ -70,7 +72,7 @@ import { RdioScannerAdminPasswordComponent } from './tools/password/password.com
         RdioScannerAdminUnitComponent,
     ],
     exports: [RdioScannerAdminComponent],
-    imports: [AppSharedModule, HttpClientModule],
+    imports: [AppSharedModule, HttpClientModule, NgxColorsModule],
     providers: [RdioScannerAdminService]
 })
 export class RdioScannerAdminModule { }

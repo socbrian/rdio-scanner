@@ -1,6 +1,6 @@
 <div class="rdio-status">
     <div class="branding">{{ branding }}</div>
-    <div class="led" [ngClass]="ledStyle"></div>
+    <div class="led" [ngClass]="ledStyle" [style.background]="ledColor" [style.box-shadow]="ledBoxShadow"></div>
 </div>
 <div class="rdio-display" [ngClass]="{ idle: !dimmer }" (dblclick)="toggleFullscreen.emit()">
     <div class="row">

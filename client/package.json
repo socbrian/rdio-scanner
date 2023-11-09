@@ -13,6 +13,7 @@
     "@angular/router": "^17.0.1",
     "@angular/service-worker": "^17.0.1",
     "@bjorn3/browser_wasi_shim": "^0.2.15",
+    "ngx-colors": "^3.5.2",
     "rxjs": "~7.8.1",
     "tslib": "^2.6.2"
   },

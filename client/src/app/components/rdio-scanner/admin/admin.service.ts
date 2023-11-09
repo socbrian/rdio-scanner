@@ -288,10 +288,6 @@ export class RdioScannerAdminService implements OnDestroy {
         return {};
     }
 
-    getLeds(): string[] {
-        return ['blue', 'cyan', 'green', 'magenta', 'orange', 'red', 'white', 'yellow'];
-    }
-
     async getLogs(options: LogsQueryOptions): Promise<LogsQuery | undefined> {
         try {
             const res = await firstValueFrom(this.ngHttpClient.post<LogsQuery>(

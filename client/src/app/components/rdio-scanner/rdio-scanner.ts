@@ -171,7 +171,7 @@ export interface RdioScannerSearchOptions {
 export interface RdioScannerSystem {
     id: number;
     label: string;
-    led?: 'blue' | 'cyan' | 'green' | 'magenta' | 'orange' | 'red' | 'white' | 'yellow';
+    led?: string;
     order?: number;
     talkgroups: RdioScannerTalkgroup[];
     units: RdioScannerUnit[];
@@ -182,7 +182,7 @@ export interface RdioScannerTalkgroup {
     group: string;
     id: number;
     label: string;
-    led?: 'blue' | 'cyan' | 'green' | 'magenta' | 'orange' | 'red' | 'white' | 'yellow';
+    led?: string;
     name: string;
     tag: string;
 }

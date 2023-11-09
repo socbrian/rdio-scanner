@@ -79,14 +79,7 @@
             <span class="mat-caption">Indicator color when playing an audio file from this talkgroup. If not specified,
                 the color configured for the system is used.</span>
         </p>
-        <mat-form-field>
-            <mat-select formControlName="led" placeholder="Color">
-                <mat-option [value]="null">Default</mat-option>
-                <mat-option *ngFor="let led of leds" [value]="led">
-                    {{ led | titlecase }}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
+        <ngx-colors ngx-colors-trigger style="display: inline-block; margin:5px;" [formControl]="led"></ngx-colors>
     </div>
     <div class="row">
         <p>

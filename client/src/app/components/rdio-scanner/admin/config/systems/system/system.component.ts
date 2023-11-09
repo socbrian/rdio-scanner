@@ -18,7 +18,7 @@
  */
 
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { Component, EventEmitter, Input, Output, QueryList, ViewChildren, inject } from '@angular/core';
+import { Component, EventEmitter, Input, Output, QueryList, ViewChildren, inject, OnChanges } from '@angular/core';
 import { UntypedFormArray, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { MatExpansionPanel } from '@angular/material/expansion';
 import { RdioScannerAdminService, Group, Tag } from '../../../admin.service';
@@ -27,7 +27,7 @@ import { RdioScannerAdminService, Group, Tag } from '../../../admin.service';
     selector: 'rdio-scanner-admin-system',
     templateUrl: './system.component.html',
 })
-export class RdioScannerAdminSystemComponent {
+export class RdioScannerAdminSystemComponent implements OnChanges {
     private adminService = inject(RdioScannerAdminService)
 
     @Input() form = new UntypedFormGroup({});
@@ -40,7 +40,9 @@ export class RdioScannerAdminSystemComponent {
 
     @Output() remove = new EventEmitter<void>();
 
-    leds = this.adminService.getLeds();
+    get led(): UntypedFormControl {
+        return this.form.get('led') as UntypedFormControl;
+    }
 
     get talkgroups(): UntypedFormGroup[] {
         const talkgroups = this.form.get('talkgroups') as UntypedFormArray;
@@ -54,6 +56,9 @@ export class RdioScannerAdminSystemComponent {
 
         return units.controls
             .sort((a, b) => (a.value.order || 0) - (b.value.order || 0)) as UntypedFormGroup[];
+    }
+
+    ngOnChanges(): void {
     }
 
     @ViewChildren(MatExpansionPanel) private panels: QueryList<MatExpansionPanel> | undefined;

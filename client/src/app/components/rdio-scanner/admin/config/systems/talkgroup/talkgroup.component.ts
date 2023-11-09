@@ -18,7 +18,7 @@
  */
 
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
-import { FormArray, FormControl, UntypedFormGroup } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormControl } from '@angular/forms';
 import { RdioScannerAdminService, Group, Tag } from '../../../admin.service';
 
 @Component({
@@ -34,7 +34,9 @@ export class RdioScannerAdminTalkgroupComponent {
 
     @Output() remove = new EventEmitter<void>();
 
-    leds = this.adminService.getLeds();
+    get led(): UntypedFormControl {
+        return this.form?.get('led') as UntypedFormControl;
+    }
 
     get groups(): Group[] {
         return this.form?.root.get('groups')?.value as Group[];
