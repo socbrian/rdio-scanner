@@ -17,5 +17,6 @@ package main
 
 import "embed"
 
+//go:generate sh -c "cd ../client && npm ci && npm run build"
 //go:embed webapp/*
 var webapp embed.FS

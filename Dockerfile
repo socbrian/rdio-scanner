@@ -1,37 +1,24 @@
-FROM node:21.7.1 as frontend
-
-WORKDIR /app
-
-COPY client/package.json client/package-lock.json ./
-
-RUN npm ci
-
-COPY client/. ./
-
-RUN npm run build
-
-FROM golang:1.22.1 as binary
-
-WORKDIR /app
-
-COPY server/go.mod server/go.sum /app/server/
-RUN cd server && go mod download
-
-COPY server/. server/.
-COPY --from=frontend /app/dist/ server/webapp/
-
-RUN cd server && CGO_ENABLED=0 go build -o /rdio-scanner
-
 FROM alpine:3.19.1
 
 WORKDIR /app
 
 ENV DOCKER=1
 
-COPY --from=binary /rdio-scanner ./
+# renovate: datasource=repology depName=alpine_3_19/ca-certificates
+ARG CA_CERTIFICATES_VERSION=20230506-r0
+# renovate: datasource=repology depName=alpine_3_19/ffmpeg
+ARG FFMPEG_VERSION=6.1.1-r0
+# renovate: datasource=repology depName=alpine_3_19/tzdata
+ARG TZDATA_VERSION=2024a-r0
 
-RUN mkdir -p /app/data && \
-    apk --no-cache --no-progress add ffmpeg mailcap tzdata
+RUN apk add --no-cache \
+    ca-certificates="${CA_CERTIFICATES_VERSION}" \
+    ffmpeg="${FFMPEG_VERSION}" \
+    tzdata="${TZDATA_VERSION}"
+
+COPY rdio-scanner ./
+
+RUN mkdir -p /app/data
 
 VOLUME [ "/app/data" ]
 

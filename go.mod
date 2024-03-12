@@ -1,4 +1,4 @@
-module rdio-scanner/server
+module github.com/USA-RedDragon/rdio-scanner
 
 go 1.22.1
 
