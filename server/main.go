@@ -67,7 +67,7 @@ func main() {
 		}
 	}
 
-	fmt.Printf("\nRdio Scanner v%s\n", Version)
+	fmt.Printf("\nRdio Scanner %s-%s\n", version, commit)
 	fmt.Printf("----------------------------------\n")
 
 	if err := controller.Start(); err != nil {

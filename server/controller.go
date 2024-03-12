@@ -453,7 +453,7 @@ func (controller *Controller) ProcessMessageCommandPin(client *Client, message *
 }
 
 func (controller *Controller) ProcessMessageCommandVersion(client *Client) {
-	p := map[string]string{"version": Version}
+	p := map[string]string{"version": version, "commit": commit}
 
 	if len(controller.Options.Branding) > 0 {
 		p["branding"] = controller.Options.Branding

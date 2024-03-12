@@ -28,6 +28,14 @@ import (
 	"gopkg.in/ini.v1"
 )
 
+// https://goreleaser.com/cookbooks/using-main.version/
+//
+//nolint:golint,gochecknoglobals
+var (
+	version = "dev"
+	commit  = "none"
+)
+
 const (
 	DbTypeMariadb    string = "mariadb"
 	DbTypeMysql      string = "mysql"
@@ -174,7 +182,7 @@ func NewConfig() *Config {
 		}
 
 	case *version:
-		fmt.Println(Version)
+		fmt.Printf("Version %s Commit %s", version, commit)
 		os.Exit(0)
 
 	default:
