@@ -6,18 +6,19 @@
 
 $font-family: Roboto, "Helvetica Neue", sans-serif;
 
-$primary: mat.define-palette(mat.$grey-palette, 800, 50);
-$accent: mat.define-palette(mat.$green-palette);
+$dark-primary-text: rgba(black, 0.87);
+$light-primary-text: white;
 
-$theme: mat.define-light-theme((
+$theme: mat.define-theme((
   color: (
-    primary: $primary,
-    accent: $accent,
+    theme-type: light,
+    tertiary: mat.$green-palette,
   ),
-  typography: mat.define-typography-config(),
 ));
 
-@include mat.all-component-themes($theme);
+html {
+	@include mat.all-component-themes($theme);
+}
 
 body {
 	font-family: $font-family;
