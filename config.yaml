@@ -1,0 +1,7 @@
+name: "Rdio Scanner"
+description: "!"
+version: "1.0.0"
+slug: "RdioScanner"
+init: false
+arch:
+  - amd64
