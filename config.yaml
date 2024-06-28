@@ -5,3 +5,5 @@ slug: "RdioScanner"
 init: false
 arch:
   - amd64
+ports:
+  3000/tcp: 3000
