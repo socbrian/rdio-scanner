@@ -4,4 +4,4 @@
 docker build -t Dockerfile
 
 #run
-docker run --detach --env TZ=America/New York --name rdio-scanner --publish 3000:3000 --restart always  --volume ~/.rdio-scanner:/app/data Dockerfile:latest
+docker run --detach --env TZ=America/NewYork --name rdio-scanner --publish 3000:3000 --restart always  --volume ~/.rdio-scanner:/app/data Dockerfile
