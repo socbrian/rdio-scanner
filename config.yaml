@@ -1,7 +1,7 @@
 name: "Rdio Scanner"
-description: "!"
+description: "An add-on for Rdio Scanner"
 version: "1.0.0"
-slug: "RdioScanner"
+slug: "rdio_scanner"
 init: false
 arch:
   - amd64
