@@ -1,0 +1,15 @@
+{
+  // ...existing code if any...
+  "name": "RdioScanner",
+  "version": "1.0.0",
+  "slug": "rdio_scanner",
+  "description": "Home Assistant add-on for RdioScanner",
+  "startup": "services",
+  "boot": "auto",
+  "hassio_api": true,
+  "ports": {
+    "3000/tcp": 3000
+  },
+  "webui": "http://[HOST]:[PORT:3000]"
+  // ...existing code if any...
+}
